@@ -1,0 +1,41 @@
+from tkinter import *
+from tkinter import ttk as tk
+from tkinter import messagebox
+
+
+def update_listbox(quest_listbox, quest_counter_label):
+    for index in range(quest_listbox.size()):
+        quest = quest_listbox.get(index)
+
+def add_task(quest_listbox, quest_counter_label, quest):
+    if quest != "":
+        quest_listbox.insert(END, quest)
+    else:
+        messagebox.showwarning(title="Warning!", message="You must enter a quest!")
+
+    update_listbox(quest_listbox, quest_counter_label)
+    update_quest_count(quest_listbox, quest_counter_label)
+
+def del_task(quest_listbox, quest_counter_label):
+    selected_targets = quest_listbox.curselection()
+    if not selected_targets:
+        messagebox.showwarning(title="Warning!", message="You must make choices!")
+    else:
+        for index in selected_targets:
+            quest_listbox.delete(index)
+
+    update_listbox(quest_listbox, quest_counter_label)
+    update_quest_count(quest_listbox, quest_counter_label)
+
+def del_all_tasks(quest_window):
+    #iterate through listbox items
+    #delete while iterating
+    pass
+
+def choose_random():
+    pass
+
+def update_quest_count(quest_listbox=None, quest_counter_label=None):
+    if quest_listbox is not None:
+        count = quest_listbox.size()
+        quest_counter_label.config(text=f"Total quests: {count}")

@@ -6,6 +6,7 @@
 
 #Part 1: Create the GUI Elements
 from tkinter import *
+from tkinter import messagebox
 from tkinter import ttk as tk
 import lib as f
 
@@ -17,8 +18,20 @@ root.title("Quest Log")
 #root Configs:
 root.configure(background="#cbc4c2")
 
+#Set window width and height
+window_width = 650
+window_height = 600
+
+#Get screen width and height
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+#Calculate position x, y to center the window
+x = int(screen_width / 2 - window_width / 2)
+y = int(screen_height / 2 - window_height / 2)
+
 #Window dimensions
-root.geometry("500x600")
+root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
 #Defines frame for containing our root window elements
 base = tk.Frame(root, padding=10)
@@ -29,14 +42,25 @@ base.grid()
 def add_button_handler():
     quest = entry_field.get()
     if quest:
-        f.add_task(quest_listbox, quest_counter_label, quest)
+        f.add_task(quest_listbox, side_panel_text, quest)
         entry_field.delete(0, END)
+    else:
+        messagebox.showwarning(title="Warning!", message="You must enter a quest!")
+
 
 def del_button_handler():
-    f.del_task(quest_listbox, quest_counter_label)
+    f.del_task(quest_listbox, side_panel_text)
+
+##### PLACEHOLDER TESTING DATA #####
+
+player_level = 1
+hp_points = 25
+mana_points = 15
+xp_points = 0
+
 
 #Widgets displaying in root window
-##### HEADER SECTION #####
+##### HEADER ICON #####
 icon_section = tk.Label(base, text="Label1 - Icon",
           foreground="white",
           background="black")
@@ -47,15 +71,31 @@ icon_section.grid(column=0,
        padx=10,
        pady=15)
 
-user_header = tk.Label(base,
-                       text="Label2 - User Header",
-                       justify="left",
-                       background="gray")
+##### HEADER - USER STATS #####
 
-user_header.grid(column=1,
-                 row=0,
+user_header = tk.LabelFrame(base,
+                            text="Label2 - User Header")
+
+user_header.grid(row=0,
+                 column=1,
                  sticky="w",
                  columnspan=2)
+
+user_header_content = Text(user_header,
+                           height=4,
+                           width=10)
+
+user_header_content.grid(column=2,
+                         row=1,
+                         columnspan=5,
+                         rowspan=2)
+
+header_data = ("LEVEL:" + f"{player_level}"
+               "\nHP:" + f"{hp_points}"
+               "\nMANA:" + f"{mana_points}"
+               "\nEXP:" + f"{xp_points}")
+
+user_header_content.insert(END, header_data)
 
 ##### MAIN WINDOW #####
 main_window = tk.Label(base,
@@ -63,7 +103,7 @@ main_window = tk.Label(base,
                        justify="left")
 
 main_window.grid(column=1,
-                 row=1,
+                 row=2,
                  sticky="w",
                  columnspan=2)
 
@@ -83,15 +123,18 @@ quest_listbox.grid(column=1,
 ##### USER STATS SIDEPANEL #####
 
 #side panel
-side_panel = tk.Frame(base)
+side_panel = tk.LabelFrame(base,
+                           text="Statistics")
 
 side_panel.grid(column=0,
                 row=2,
                 sticky="w")
 
-quest_counter_label = tk.Label(side_panel,
-                              text="Total quests: 0")
-quest_counter_label.pack()
+side_panel_text = Text(side_panel,
+                       width=25,
+                       height=10)
+
+side_panel_text.pack()
 
 
 ##### TASK OPTIONS #####
@@ -117,6 +160,9 @@ entry_field = tk.Entry(task_options_container,
 entry_field.grid(column=1,
                  row=0)
 
+#Submit entry on Enter keypress:
+entry_field.bind("<Return>", lambda event: add_button_handler)
+
 #Add entry button
 add_button = tk.Button(task_options_container,
           text="Add quest",
@@ -135,7 +181,7 @@ del_button.grid(column=0,
                 row=1)
 
 #Initialize item count
-f.update_quest_count(quest_listbox, quest_counter_label)
+f.update_quest_count(quest_listbox, side_panel_text)
 
 #Start the main events loop
 root.mainloop()

@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import ttk as tk
 from tkinter import messagebox
 
 
@@ -7,14 +6,14 @@ def update_listbox(quest_listbox, quest_counter_label):
     for index in range(quest_listbox.size()):
         quest = quest_listbox.get(index)
 
-def add_task(quest_listbox, quest_counter_label, quest):
-    if quest != "":
+def add_task(quest_listbox, side_panel_text, quest):
+    if quest:
         quest_listbox.insert(END, quest)
     else:
         messagebox.showwarning(title="Warning!", message="You must enter a quest!")
 
-    update_listbox(quest_listbox, quest_counter_label)
-    update_quest_count(quest_listbox, quest_counter_label)
+    update_listbox(quest_listbox, side_panel_text)
+    update_quest_count(quest_listbox, side_panel_text)
 
 def del_task(quest_listbox, quest_counter_label):
     selected_targets = quest_listbox.curselection()
@@ -35,7 +34,18 @@ def del_all_tasks(quest_window):
 def choose_random():
     pass
 
-def update_quest_count(quest_listbox=None, quest_counter_label=None):
+def update_quest_count(quest_listbox=None, side_panel_text=None):
     if quest_listbox is not None:
         count = quest_listbox.size()
-        quest_counter_label.config(text=f"Total quests: {count}")
+        # Update the side panel
+        side_panel_text.delete("1.0", END)
+        updated_info = (f"TOTAL QUESTS: {count}"
+                        f"\nINCOMPLETE QUESTS: {count}"
+                        f"\nCOMPLETE QUESTS: 0")
+        side_panel_text.insert(END, updated_info)
+    else:
+        side_panel_text.delete("1.0", END)
+        updated_info = (f"TOTAL QUESTS: 0"
+                        f"\nINCOMPLETE QUESTS: 0"
+                        f"\nCOMPLETE QUESTS: 0")
+        side_panel_text.insert(END, updated_info)

@@ -41,7 +41,7 @@ base = tk.Frame(root,
                 padding=10,)
 base.place(relx=0.5,
            rely=0.5,
-           anchor=CENTER)
+           anchor="center")
 
 ##### EVENT HANDLERS #####
 

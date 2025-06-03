@@ -1,13 +1,14 @@
 from tkinter import *
 from tkinter import messagebox
+from Objs import Quest
 
 
 def update_listbox(quest_listbox, quest_counter_label):
-    for index in range(quest_listbox.size()):
-        quest = quest_listbox.get(index)
+    pass
 
 def add_task(quest_listbox, side_panel_text, quest):
     if quest:
+        quest = Quest(quest, 10)
         quest_listbox.insert(END, quest)
     else:
         messagebox.showwarning(title="Warning!", message="You must enter a quest!")

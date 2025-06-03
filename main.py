@@ -4,10 +4,11 @@
 
 #Start with a simple to-do list GUI
 
-#Part 1: Create the GUI Elements
+##### IMPORT STATEMENTS #####
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk as tk
+from Objs import *
 import lib as f
 
 #Create root window
@@ -33,9 +34,14 @@ y = int(screen_height / 2 - window_height / 2)
 #Window dimensions
 root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
+quest_list = [] # List to store quests
+
 #Defines frame for containing our root window elements
-base = tk.Frame(root, padding=10)
-base.grid()
+base = tk.Frame(root,
+                padding=10,)
+base.place(relx=0.5,
+           rely=0.5,
+           anchor=CENTER)
 
 ##### EVENT HANDLERS #####
 

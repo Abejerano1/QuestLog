@@ -6,10 +6,15 @@
 
 ##### IMPORT STATEMENTS #####
 from tkinter import *
-from tkinter import messagebox
 from tkinter import ttk as tk
-from Objs import *
 import lib as f
+
+##### PLACEHOLDER TESTING DATA #####
+
+player_level = 1
+hp_points = 25
+mana_points = 15
+xp_points = 0
 
 #Create root window
 #Constructs Tk object named "root"
@@ -21,7 +26,7 @@ root.configure(background="#cbc4c2")
 
 #Set window width and height
 window_width = 650
-window_height = 600
+window_height = 750
 
 #Get screen width and height
 screen_width = root.winfo_screenwidth()
@@ -34,8 +39,6 @@ y = int(screen_height / 2 - window_height / 2)
 #Window dimensions
 root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-quest_list = [] # List to store quests
-
 #Defines frame for containing our root window elements
 base = tk.Frame(root,
                 padding=10,)
@@ -43,39 +46,40 @@ base.place(relx=0.5,
            rely=0.5,
            anchor="center")
 
-##### EVENT HANDLERS #####
+##### QUEST LIST STORAGE ####
+quest_list = []
+completed_list = []
 
+##### EVENT HANDLERS #####
 def add_button_handler():
     quest = entry_field.get()
-    if quest:
-        f.add_task(quest_listbox, side_panel_text, quest)
-        entry_field.delete(0, END)
-    else:
-        messagebox.showwarning(title="Warning!", message="You must enter a quest!")
+    entry_field.delete(0, END)
+    print("Debug: side_panel_text =", side_panel_text)
+    f.add_quest(quest, quest_listbox, side_panel_text, quest_list)
 
 
 def del_button_handler():
-    f.del_task(quest_listbox, side_panel_text)
+    #print("Debug: side_panel_text =", side_panel_text)
+    f.del_quest(quest_listbox, side_panel_text, quest_list)
 
-##### PLACEHOLDER TESTING DATA #####
 
-player_level = 1
-hp_points = 25
-mana_points = 15
-xp_points = 0
-
+def complete_button_handler():
+    #print("Debug: side_panel_text =", side_panel_text)
+    f.complete_quest(quest_listbox, side_panel_text,
+                     quest_history_listbox, quest_list, completed_list)
 
 #Widgets displaying in root window
+
 ##### HEADER ICON #####
 icon_section = tk.Label(base, text="Label1 - Icon",
-          foreground="white",
-          background="black")
+                        foreground="white",
+                        background="black",
+                        justify="center")
 
 icon_section.grid(column=0,
-       row=0,
-       sticky="w",
-       padx=10,
-       pady=15)
+                  row=0,
+                  ipadx=10,
+                  ipady=10)
 
 ##### HEADER - USER STATS #####
 
@@ -84,17 +88,13 @@ user_header = tk.LabelFrame(base,
 
 user_header.grid(row=0,
                  column=1,
-                 sticky="w",
-                 columnspan=2)
+                 sticky="w")
 
 user_header_content = Text(user_header,
                            height=4,
                            width=10)
 
-user_header_content.grid(column=2,
-                         row=1,
-                         columnspan=5,
-                         rowspan=2)
+user_header_content.pack(side="left")
 
 header_data = ("LEVEL:" + f"{player_level}"
                "\nHP:" + f"{hp_points}"
@@ -104,9 +104,8 @@ header_data = ("LEVEL:" + f"{player_level}"
 user_header_content.insert(END, header_data)
 
 ##### MAIN WINDOW #####
-main_window = tk.Label(base,
-                       text="Label4 - Quest Window",
-                       justify="left")
+main_window = tk.Labelframe(base,
+                       text="Quest Window")
 
 main_window.grid(column=1,
                  row=2,
@@ -114,17 +113,18 @@ main_window.grid(column=1,
                  columnspan=2)
 
 #Create Listbox
-quest_listbox = Listbox(base,
-                       height=10,
-                       width=30,
-                       bg="white",
-                       fg="black",
-                       selectmode=SINGLE,
-                       activestyle="dotbox")
+quest_listbox = Listbox(main_window,
+                        height=10,
+                        width=40,
+                        bg="white",
+                        fg="black",
+                        selectmode=SINGLE,
+                        activestyle="dotbox")
 
 quest_listbox.grid(column=1,
                   row=2,
                   sticky="w")
+quest_listbox.yview()
 
 ##### USER STATS SIDEPANEL #####
 
@@ -137,58 +137,83 @@ side_panel.grid(column=0,
                 sticky="w")
 
 side_panel_text = Text(side_panel,
-                       width=25,
-                       height=10)
-
+                       width=20,
+                       height=12)
 side_panel_text.pack()
 
 
+
 ##### TASK OPTIONS #####
-task_options = tk.Label(base,
-         text="Label5 - Completed Tasks",
-         justify="left")
-
-task_options.grid(column=1,
-                  row=3,
-                  columnspan=2,
-                  sticky="w")
-
-#Section off our task options
-task_options_container = tk.Frame(base)
-task_options_container.grid(column=1,
-                            row=4,
-                            sticky="w")
+quest_options_container = tk.Labelframe(base,
+                                        text="Task Options",
+                                        padding=4)
+quest_options_container.grid(column=1,
+                             row=4,
+                             sticky="w",
+                             pady=4)
 
 ##### ENTRY FIELD #####
-entry_field = tk.Entry(task_options_container,
+entry_field = tk.Entry(quest_options_container,
          justify="left")
 
 entry_field.grid(column=1,
-                 row=0)
+                 row=0,
+                 padx=5)
 
 #Submit entry on Enter keypress:
 entry_field.bind("<Return>", lambda event: add_button_handler)
 
-#Add entry button
-add_button = tk.Button(task_options_container,
-          text="Add quest",
-          command=add_button_handler)
+##### ADD ENTRY BUTTON #####
+add_button = tk.Button(quest_options_container,
+                        text="Add quest",
+                        command=add_button_handler,
+                        width=13)
 
 add_button.grid(column=0,
                 row=0,
                 sticky="w")
 
-#Remove list entry
-del_button = tk.Button(task_options_container,
+##### DELETE ENTRY BUTTON #####
+del_button = tk.Button(quest_options_container,
                        text="Delete quest",
-                       command=del_button_handler)
+                       command=del_button_handler,
+                       width=13)
 
 del_button.grid(column=0,
-                row=1)
+                row=1,
+                sticky="w")
+
+##### MARK COMPLETE BUTTON #####
+complete_button = tk.Button(quest_options_container,
+                            text="Mark Complete",
+                            command=complete_button_handler,
+                            width=13)
+
+complete_button.grid(column=0,
+                     row=2,
+                     sticky="w")
+
+##### QUEST HISTORY FOOTER PANEL #####
+quest_history_panel = tk.Labelframe(base,
+                                    text="Completed Quests:")
+
+quest_history_panel.grid(column=0,
+                         row = 5,
+                         columnspan=3,
+                         sticky="w",
+                         pady=5)
+
+quest_history_listbox = Listbox(quest_history_panel,
+                                width=60,
+                                height=5,
+                                selectmode="",
+                                activestyle="dotbox")
+quest_history_listbox.pack()
+
+
 
 #Initialize item count
-f.update_quest_count(quest_listbox, side_panel_text)
+f.update_side_panel(side_panel_text, quest_history_listbox, quest_listbox)
 
 #Start the main events loop
 root.mainloop()
-

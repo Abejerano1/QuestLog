@@ -12,4 +12,10 @@ class Quest:
         return f"{self.name}                                (XP: {self.exp})"
 
     def status_check(self):
-        return self.complete
+        # Returns:
+        #   TRUE = complete
+        #   FALSE = incomplete
+        if self.complete:
+            return True
+        else:
+            return False

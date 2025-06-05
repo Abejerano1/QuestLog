@@ -14,9 +14,10 @@ def add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_lis
         new_quest = Quest(name, 10)
         # Inserts quest at the end of main listbox
         quest_listbox.insert(END, new_quest)
-        update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
+        # Clears entry field
         entry_field.delete(0, END)
-
+        # Updates the stats panel
+        update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
 def del_quest(quest_listbox, side_panel_contents, quest_history_listbox):
     # Stores selected quest
@@ -46,7 +47,7 @@ def complete_quest(quest_listbox, side_panel_contents,
         # Sends quest to history window
         add_quest_history(quest, quest_history_listbox)
         # Updates side panel
-        update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
+        #update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
         # Removes quest from main window
         del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
         entry_field.delete(0, END)
@@ -70,7 +71,7 @@ def update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
     incomplete = quest_listbox.size()
     total = complete + incomplete
 
-    if quest_history_listbox.size() > 0:
+    if quest_history_listbox.size() >= 0:
         # Update the side panel
         side_panel_contents.delete(0, END)
 

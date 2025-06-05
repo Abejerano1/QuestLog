@@ -1,12 +1,13 @@
 #########################
 # MAIN Tkinter BRANCH   #
 #########################
-
+import tkinter
 #Start with a simple to-do list GUI
 
 ##### IMPORT STATEMENTS #####
 from tkinter import *
 from tkinter import ttk as tk
+from PIL import Image, ImageTk
 import lib as f
 
 ##### PLACEHOLDER TESTING DATA #####
@@ -26,7 +27,7 @@ root.configure(background="#cbc4c2")
 
 #Set window width and height
 window_width = 650
-window_height = 750
+window_height = 800
 
 #Get screen width and height
 screen_width = root.winfo_screenwidth()
@@ -72,28 +73,35 @@ def complete_button_handler():
 #Widgets displaying in root window
 
 ##### HEADER ICON #####
-icon_section = tk.Label(base, text="Label1 - Icon",
-                        foreground="white",
-                        background="black",
-                        justify="center")
+icon_section = tk.LabelFrame(base, text="User Icon")
 
 icon_section.grid(column=0,
-                  row=0,
-                  ipadx=10,
-                  ipady=10)
+                  row=0)
+
+icon_path = "Plankton_Meme.jpg"
+icon = Image.open(icon_path)
+
+preferred_width = 100
+preferred_height = 100
+resized_icon = icon.resize((preferred_width, preferred_height))
+
+profile_icon = ImageTk.PhotoImage(resized_icon)
+icon_panel = tkinter.Label(icon_section, image = profile_icon)
+icon_panel.pack(fill = "both", expand = False)
 
 ##### HEADER - USER STATS #####
 
 user_header = tk.LabelFrame(base,
-                            text="Label2 - User Header")
+                            text="User Header")
 
 user_header.grid(row=0,
                  column=1,
+                 columnspan=2,
                  sticky="w")
 
 user_header_content = Text(user_header,
                            height=4,
-                           width=10)
+                           width=40)
 
 user_header_content.pack(side="left")
 
@@ -106,16 +114,15 @@ user_header_content.insert(END, header_data)
 
 ##### MAIN WINDOW #####
 main_window = tk.Labelframe(base,
-                       text="Quest Window")
+                       text="Quest Log")
 
 main_window.grid(column=1,
                  row=2,
                  sticky="w",
                  columnspan=2)
 
-#Create Listbox
 quest_listbox = Listbox(main_window,
-                        height=10,
+                        height=12,
                         width=40,
                         bg="white",
                         fg="black",
@@ -146,11 +153,10 @@ side_panel_contents.pack()
 
 ##### TASK OPTIONS #####
 quest_options_container = tk.Labelframe(base,
-                                        text="Task Options",
-                                        padding=4)
+                                        text="Task Options")
 quest_options_container.grid(column=1,
                              row=4,
-                             sticky="w",
+                             sticky="e",
                              pady=4)
 
 ##### ENTRY FIELD #####

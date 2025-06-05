@@ -3,7 +3,7 @@ from tkinter import messagebox
 from Objs import Quest
 
 def add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_listbox):
-
+# Stores selected quest
     quest = entry_field.get()
 
     if not quest:

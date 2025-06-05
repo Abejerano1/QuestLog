@@ -50,23 +50,24 @@ base.place(relx=0.5,
 quest_list = []
 completed_list = []
 
+##### GLOBAL COUNTERS #####
+
 ##### EVENT HANDLERS #####
 def add_button_handler():
-    quest = entry_field.get()
-    entry_field.delete(0, END)
-    print("Debug: side_panel_text =", side_panel_text)
-    f.add_quest(quest, quest_listbox, side_panel_text, quest_list)
-
+    f.add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_listbox)
+    f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
 def del_button_handler():
     #print("Debug: side_panel_text =", side_panel_text)
-    f.del_quest(quest_listbox, side_panel_text, quest_list)
+    f.del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
+    f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
 
 def complete_button_handler():
     #print("Debug: side_panel_text =", side_panel_text)
-    f.complete_quest(quest_listbox, side_panel_text,
-                     quest_history_listbox, quest_list, completed_list)
+    f.complete_quest(quest_listbox, side_panel_contents,
+                     quest_history_listbox, entry_field)
+    f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
 #Widgets displaying in root window
 
@@ -136,10 +137,10 @@ side_panel.grid(column=0,
                 row=2,
                 sticky="w")
 
-side_panel_text = Text(side_panel,
+side_panel_contents = Listbox(side_panel,
                        width=20,
                        height=12)
-side_panel_text.pack()
+side_panel_contents.pack()
 
 
 
@@ -212,8 +213,8 @@ quest_history_listbox.pack()
 
 
 
-#Initialize item count
-f.update_side_panel(side_panel_text, quest_history_listbox, quest_listbox)
+#Initialize side panel
+f.initialize_side_panel(side_panel_contents)
 
 #Start the main events loop
 root.mainloop()

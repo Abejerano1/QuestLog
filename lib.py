@@ -2,21 +2,23 @@ from tkinter import *
 from tkinter import messagebox
 from Objs import Quest
 
+def add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_listbox):
 
-def add_quest(quest, quest_listbox, side_panel_text, quest_list):
-    if quest:
+    quest = entry_field.get()
+
+    if not quest:
+        messagebox.showerror(title="Warning!", message="Please enter a quest.")
+    else:
         name = quest
         # Creates new quest object
         new_quest = Quest(name, 10)
-        quest_list.append(new_quest)
         # Inserts quest at the end of main listbox
         quest_listbox.insert(END, new_quest)
+        update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
+        entry_field.delete(0, END)
 
-        update_side_panel(side_panel_text, quest_list)
-    else:
-        messagebox.showerror(title="Warning!", message="Please enter a quest.")
 
-def del_quest(quest_listbox, quest_counter_label, quest_list):
+def del_quest(quest_listbox, side_panel_contents, quest_history_listbox):
     # Stores selected quest
     selected_targets = quest_listbox.curselection()
     if not selected_targets:
@@ -24,59 +26,61 @@ def del_quest(quest_listbox, quest_counter_label, quest_list):
     else:
         for index in selected_targets:
             quest_listbox.delete(index)
-            quest_list.delete(index)
-
-    update_side_panel(quest_list, quest_listbox, quest_counter_label)
+        update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
 def del_all_tasks(quest_listbox, side_panel_text):
     for quest in quest_listbox:
         quest_listbox.delete(0, END, quest)
 
 
-def complete_quest(quest_listbox, side_panel_text,
-                   quest_history_listbox, quest_list, completed_list):
-    quest_indices = quest_listbox.curselection()
-    try:
-        index = quest_indices[0]
-        # Gets the actual Quest object
-        quest = quest_list[index]
+def complete_quest(quest_listbox, side_panel_contents,
+                   quest_history_listbox, entry_field):
 
-        # Marks quest as complete
-        quest.complete = True
-        completed_list.append(quest)
-        # Sends quest to history window
-        update_quest_history(quest, quest_history_listbox)
-        # Updates side panel
-        update_side_panel(quest_list, quest_listbox, side_panel_text)
-        # Removes quest from main window
-        del quest_list[index]
-        quest_listbox.delete(index)
-    except IndexError:
+    index = quest_listbox.curselection()
+    if not index:
         messagebox.showwarning(title="Warning!", message="You must select a quest!")
+    else:
+        index = quest_listbox.curselection()
+        # Gets the actual Quest object
+        quest = quest_listbox.get(index)
+        # Sends quest to history window
+        add_quest_history(quest, quest_history_listbox)
+        # Updates side panel
+        update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
+        # Removes quest from main window
+        del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
+        entry_field.delete(0, END)
+
 
 
 def choose_random():
     pass
 
-def update_side_panel(side_panel_text, quest_history_listbox, quest_listbox=None):
-    if quest_listbox is not None:
-        # Variable for quest count
-        quest_count = quest_listbox.size()
-        # variable for list
-        completed_count = quest_history_listbox.size()
+def initialize_side_panel(side_panel_contents):
+    text1 = "INCOMPLETE QUESTS: 0"
+    text2 = "COMPLETE QUESTS: 0"
+    text3 = "TOTAL QUESTS: 0"
+    side_panel_contents.insert(END, text1)
+    side_panel_contents.insert(END, text2)
+    side_panel_contents.insert(END, text3)
 
+def update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox):
+
+    complete = quest_history_listbox.size()
+    incomplete = quest_listbox.size()
+    total = complete + incomplete
+
+    if quest_history_listbox.size() > 0:
         # Update the side panel
-        side_panel_text.delete("1.0", END)
-        updated_info = (f"TOTAL QUESTS: {quest_count}"
-                        f"\nINCOMPLETE QUESTS: {quest_count}"
-                        f"\nCOMPLETE QUESTS: {completed_count}")
-        side_panel_text.insert(END, updated_info)
-    else:
-        side_panel_text.delete("1.0", END)
-        updated_info = (f"TOTAL QUESTS: 0"
-                        f"\nINCOMPLETE QUESTS: 0"
-                        f"\nCOMPLETE QUESTS: 0")
-        side_panel_text.insert(END, updated_info)
+        side_panel_contents.delete(0, END)
 
-def update_quest_history(quest, quest_history_listbox):
+        line1 = f"INCOMPLETE QUESTS: {incomplete}"
+        line2 = f"COMPLETE QUESTS: {complete}"
+        line3 = f"TOTAL QUESTS: {total}"
+
+        side_panel_contents.insert(END, line1)
+        side_panel_contents.insert(END, line2)
+        side_panel_contents.insert(END, line3)
+
+def add_quest_history(quest, quest_history_listbox):
     quest_history_listbox.insert(END, quest)

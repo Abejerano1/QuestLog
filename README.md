@@ -20,7 +20,7 @@ Currently, you can add and delete quests.
 - Quest statistics are displayed in a side panel and update with the changes in the quest listbox.
 
 =======================================
-- installation instructions
-- usage examples
-- information on how to contribute
-- consider adding sections for licensing, contact information, and links to documentation or resources.
+- Installation instructions:
+- Usage Examples
+- How to Contribute
+- Licensing, Contact Information, Links to Documentation, and Resources

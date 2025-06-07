@@ -7,15 +7,24 @@ import tkinter
 ##### IMPORT STATEMENTS #####
 from tkinter import *
 from tkinter import ttk as tk
+from tkinter import font
 from PIL import Image, ImageTk
 import lib as f
 
 ##### PLACEHOLDER TESTING DATA #####
 
-player_level = 1
-hp_points = 25
-mana_points = 15
-xp_points = 0
+username = "username"
+player_level = "level"
+exp = "exp"
+user_class = "class"
+user_specialization = "specialization"
+
+#Loads placeholder data from user_profile JSON
+username_result = f.get_attribute(username)
+player_level_result = f.get_attribute(player_level)
+exp_result = f.get_attribute(exp)
+user_class_result = f.get_attribute(user_class)
+user_specialization_result = f.get_attribute(user_specialization)
 
 #Create root window
 #Constructs Tk object named "root"
@@ -23,7 +32,7 @@ root = Tk()
 root.title("Quest Log")
 
 #root Configs:
-root.configure(background="#cbc4c2")
+root.configure(background="#0c1105")
 
 #Set window width and height
 window_width = 650
@@ -73,7 +82,8 @@ def complete_button_handler():
 #Widgets displaying in root window
 
 ##### HEADER ICON #####
-icon_section = tk.LabelFrame(base, text="User Icon")
+icon_section = tk.LabelFrame(base,
+                             text="User Icon")
 
 icon_section.grid(column=0,
                   row=0)
@@ -99,16 +109,24 @@ user_header.grid(row=0,
                  columnspan=2,
                  sticky="w")
 
+header_font = font.Font(family="Modeseven", size=10)
+
 user_header_content = Text(user_header,
                            height=4,
-                           width=40)
+                           width=40,
+                           font=header_font,
+                           fg="#7fd900",
+                           bg="black",
+                           highlightcolor="#7fd900",
+                           highlightbackground="#293b10",
+                           highlightthickness=1)
 
 user_header_content.pack(side="left")
 
-header_data = ("LEVEL:" + f"{player_level}"
-               "\nHP:" + f"{hp_points}"
-               "\nMANA:" + f"{mana_points}"
-               "\nEXP:" + f"{xp_points}")
+header_data = (f"{username_result}"
+                       "\nLEVEL: " + f"{player_level_result}"
+                       "\nEXP: " + f"{exp_result}"
+                       "\nCLASS: " + f"{user_class_result} - {user_specialization_result}")
 
 user_header_content.insert(END, header_data)
 
@@ -121,13 +139,19 @@ main_window.grid(column=1,
                  sticky="w",
                  columnspan=2)
 
+main_window_font = font.Font(family="Modeseven", size=10)
+
 quest_listbox = Listbox(main_window,
                         height=12,
                         width=40,
-                        bg="white",
-                        fg="black",
                         selectmode=SINGLE,
-                        activestyle="dotbox")
+                        activestyle="dotbox",
+                        font=main_window_font,
+                        fg="#7fd900",
+                        bg="black",
+                        highlightcolor="#7fd900",
+                        highlightbackground="#344b15",
+                        highlightthickness=1)
 
 quest_listbox.grid(column=1,
                   row=2,
@@ -144,9 +168,18 @@ side_panel.grid(column=0,
                 row=2,
                 sticky="w")
 
+side_panel_font = font.Font(family="Modeseven", size=10)
+
 side_panel_contents = Listbox(side_panel,
-                       width=20,
-                       height=12)
+                              width=20,
+                              height=12,
+                              font=side_panel_font,
+                              fg="#7fd900",
+                              bg="black",
+                              highlightcolor="#7fd900",
+                              highlightbackground="#293b10",
+                              highlightthickness=1)
+
 side_panel_contents.pack()
 
 
@@ -160,8 +193,11 @@ quest_options_container.grid(column=1,
                              pady=4)
 
 ##### ENTRY FIELD #####
+entry_field_font = font.Font(family="Modeseven", size=10)
+
 entry_field = tk.Entry(quest_options_container,
-         justify="left")
+                       justify="left",
+                       font=entry_field_font)
 
 entry_field.grid(column=1,
                  row=0,
@@ -210,11 +246,19 @@ quest_history_panel.grid(column=0,
                          sticky="w",
                          pady=5)
 
+history_font = font.Font(family="Modeseven", size=10)
+
 quest_history_listbox = Listbox(quest_history_panel,
                                 width=60,
                                 height=5,
                                 selectmode="",
-                                activestyle="dotbox")
+                                activestyle="dotbox",
+                                font=history_font,
+                                fg="#7fd900",
+                                bg="black",
+                                highlightcolor="#7fd900",
+                                highlightbackground="#293b10",
+                                highlightthickness=1)
 quest_history_listbox.pack()
 
 

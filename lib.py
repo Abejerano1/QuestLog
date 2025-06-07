@@ -1,9 +1,13 @@
 from tkinter import *
 from tkinter import messagebox
-from Objs import Quest
+
+import Objs
+from Objs import *
+import json
+
 
 def add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_listbox):
-# Stores selected quest
+    # Stores selected quest
     quest = entry_field.get()
 
     if not quest:
@@ -19,6 +23,7 @@ def add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_lis
         # Updates the stats panel
         update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
+
 def del_quest(quest_listbox, side_panel_contents, quest_history_listbox):
     # Stores selected quest
     selected_targets = quest_listbox.curselection()
@@ -29,6 +34,7 @@ def del_quest(quest_listbox, side_panel_contents, quest_history_listbox):
             quest_listbox.delete(index)
         update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
+
 def del_all_tasks(quest_listbox, side_panel_text):
     for quest in quest_listbox:
         quest_listbox.delete(0, END, quest)
@@ -36,7 +42,6 @@ def del_all_tasks(quest_listbox, side_panel_text):
 
 def complete_quest(quest_listbox, side_panel_contents,
                    quest_history_listbox, entry_field):
-
     index = quest_listbox.curselection()
     if not index:
         messagebox.showwarning(title="Warning!", message="You must select a quest!")
@@ -53,10 +58,7 @@ def complete_quest(quest_listbox, side_panel_contents,
         entry_field.delete(0, END)
 
 
-
-def choose_random():
-    pass
-
+#Initializes the stats panel with default values
 def initialize_side_panel(side_panel_contents):
     text1 = "INCOMPLETE QUESTS: 0"
     text2 = "COMPLETE QUESTS: 0"
@@ -65,8 +67,9 @@ def initialize_side_panel(side_panel_contents):
     side_panel_contents.insert(END, text2)
     side_panel_contents.insert(END, text3)
 
-def update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox):
 
+#Updates the data displayed on the stats panel (left)
+def update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox):
     complete = quest_history_listbox.size()
     incomplete = quest_listbox.size()
     total = complete + incomplete
@@ -83,5 +86,19 @@ def update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
         side_panel_contents.insert(END, line2)
         side_panel_contents.insert(END, line3)
 
+
+#Adds a quest to the history panel (bottom of window)
 def add_quest_history(quest, quest_history_listbox):
     quest_history_listbox.insert(END, quest)
+
+#Loads a random profile (for testing purposes)
+def load_random():
+    pass
+
+def get_attribute(attribute_name):
+    profile_data = Objs.load_user_profile()
+
+    if attribute_name in profile_data:
+        return profile_data[attribute_name]
+    else:
+        return None

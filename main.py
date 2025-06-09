@@ -19,7 +19,7 @@ exp = "exp"
 user_class = "class"
 user_specialization = "specialization"
 
-#Loads placeholder data from user_profile JSON
+#Loads data from user_profile JSON
 username_result = f.get_attribute(username)
 player_level_result = f.get_attribute(player_level)
 exp_result = f.get_attribute(exp)
@@ -32,7 +32,7 @@ root = Tk()
 root.title("Quest Log")
 
 #root Configs:
-root.configure(background="#0c1105")
+root.configure(background="black")
 
 #Set window width and height
 window_width = 650
@@ -50,8 +50,11 @@ y = int(screen_height / 2 - window_height / 2)
 root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
 #Defines frame for containing our root window elements
-base = tk.Frame(root,
-                padding=10,)
+base = Frame(root,
+             bg="black",
+             padx=10,
+             pady=10)
+
 base.place(relx=0.5,
            rely=0.5,
            anchor="center")
@@ -82,8 +85,15 @@ def complete_button_handler():
 #Widgets displaying in root window
 
 ##### HEADER ICON #####
-icon_section = tk.LabelFrame(base,
-                             text="User Icon")
+icon_section = LabelFrame(base,
+                          text=f"{username_result}",
+                          bg="black",
+                          fg="#7fd900",
+                          padx=10,
+                          pady=10,
+                          font=("Modeseven", 12, "bold"),
+                          highlightthickness=0,
+                          bd=0)
 
 icon_section.grid(column=0,
                   row=0)
@@ -96,13 +106,19 @@ preferred_height = 100
 resized_icon = icon.resize((preferred_width, preferred_height))
 
 profile_icon = ImageTk.PhotoImage(resized_icon)
-icon_panel = tkinter.Label(icon_section, image = profile_icon)
+icon_panel = tkinter.Label(icon_section, image = profile_icon, bg="black")
 icon_panel.pack(fill = "both", expand = False)
 
 ##### HEADER - USER STATS #####
 
-user_header = tk.LabelFrame(base,
-                            text="User Header")
+user_header = LabelFrame(base,
+                         text="User Header",
+                         bg="black",
+                         fg="#7fd900",
+                         font=("Modeseven", 12, "bold"),
+                         bd=0,
+                         relief="flat",
+                         takefocus=0)
 
 user_header.grid(row=0,
                  column=1,
@@ -116,23 +132,27 @@ user_header_content = Text(user_header,
                            width=40,
                            font=header_font,
                            fg="#7fd900",
-                           bg="black",
+                           bg="#0c1105",
                            highlightcolor="#7fd900",
                            highlightbackground="#293b10",
-                           highlightthickness=1)
-
+                           highlightthickness=0,
+                           takefocus=0)
 user_header_content.pack(side="left")
 
-header_data = (f"{username_result}"
-                       "\nLEVEL: " + f"{player_level_result}"
-                       "\nEXP: " + f"{exp_result}"
-                       "\nCLASS: " + f"{user_class_result} - {user_specialization_result}")
+header_data = ("\nLEVEL: " + f"{player_level_result}"
+               "\nEXP: " + f"{exp_result}"
+               "\nCLASS: " + f"{user_class_result} - {user_specialization_result}")
 
 user_header_content.insert(END, header_data)
 
 ##### MAIN WINDOW #####
-main_window = tk.Labelframe(base,
-                       text="Quest Log")
+main_window = LabelFrame(base,
+                         text="Quest Log",
+                         font=("Modeseven", 12, "bold"),
+                         fg="#7fd900",
+                         bg="black",
+                         highlightthickness=0,
+                         bd=0)
 
 main_window.grid(column=1,
                  row=2,
@@ -148,7 +168,7 @@ quest_listbox = Listbox(main_window,
                         activestyle="dotbox",
                         font=main_window_font,
                         fg="#7fd900",
-                        bg="black",
+                        bg="#0c1105",
                         highlightcolor="#7fd900",
                         highlightbackground="#344b15",
                         highlightthickness=1)
@@ -161,8 +181,13 @@ quest_listbox.yview()
 ##### USER STATS SIDEPANEL #####
 
 #side panel
-side_panel = tk.LabelFrame(base,
-                           text="Statistics")
+side_panel = LabelFrame(base,
+                        text="Statistics",
+                        font=("Modeseven", 12, "bold"),
+                        bg="black",
+                        fg="#7fd900",
+                        highlightthickness=0,
+                        bd=0)
 
 side_panel.grid(column=0,
                 row=2,
@@ -175,29 +200,39 @@ side_panel_contents = Listbox(side_panel,
                               height=12,
                               font=side_panel_font,
                               fg="#7fd900",
-                              bg="black",
+                              bg="#0c1105",
                               highlightcolor="#7fd900",
                               highlightbackground="#293b10",
-                              highlightthickness=1)
+                              highlightthickness=0)
 
 side_panel_contents.pack()
 
 
 
-##### TASK OPTIONS #####
-quest_options_container = tk.Labelframe(base,
-                                        text="Task Options")
+##### QUEST OPTIONS #####
+quest_options_container = LabelFrame(base,
+                                     text="Task Options",
+                                     font=("Modeseven", 12, "bold"),
+                                     fg="#7fd900",
+                                     bg="black",
+                                     highlightthickness=0,
+                                     padx=10)
 quest_options_container.grid(column=1,
                              row=4,
                              sticky="e",
-                             pady=4)
+                             padx=5,
+                             pady=5)
 
 ##### ENTRY FIELD #####
 entry_field_font = font.Font(family="Modeseven", size=10)
 
-entry_field = tk.Entry(quest_options_container,
-                       justify="left",
-                       font=entry_field_font)
+entry_field = Entry(quest_options_container,
+                    justify="left",
+                    font=entry_field_font,
+                    bg="black",
+                    fg="#7fd900",
+                    insertbackground="#7fd900",
+                    highlightthickness=0)
 
 entry_field.grid(column=1,
                  row=0,
@@ -207,38 +242,59 @@ entry_field.grid(column=1,
 entry_field.bind("<Return>", lambda event: add_button_handler)
 
 ##### ADD ENTRY BUTTON #####
-add_button = tk.Button(quest_options_container,
-                        text="Add quest",
-                        command=add_button_handler,
-                        width=13)
+add_button = Button(quest_options_container,
+                    text="Add quest",
+                    font=("Modeseven", 10),
+                    fg="#7fd900",
+                    bg="black",
+                    highlightthickness=0,
+                    command=add_button_handler,
+                    width=10,
+                    bd=0)
 
 add_button.grid(column=0,
                 row=0,
                 sticky="w")
 
 ##### DELETE ENTRY BUTTON #####
-del_button = tk.Button(quest_options_container,
-                       text="Delete quest",
-                       command=del_button_handler,
-                       width=13)
+del_button = Button(quest_options_container,
+                    text="Delete quest",
+                    font=("Modeseven", 10),
+                    fg="#7fd900",
+                    bg="black",
+                    highlightthickness=0,
+                    command=del_button_handler,
+                    width=10,
+                    bd=0)
 
 del_button.grid(column=0,
                 row=1,
                 sticky="w")
 
 ##### MARK COMPLETE BUTTON #####
-complete_button = tk.Button(quest_options_container,
-                            text="Mark Complete",
-                            command=complete_button_handler,
-                            width=13)
+complete_button = Button(quest_options_container,
+                         text="Mark Complete",
+                         font=("Modeseven", 10),
+                         fg="#7fd900",
+                         bg="black",
+                         highlightthickness=0,
+                         command=complete_button_handler,
+                         width=10,
+                         bd=0)
 
 complete_button.grid(column=0,
                      row=2,
                      sticky="w")
 
 ##### QUEST HISTORY FOOTER PANEL #####
-quest_history_panel = tk.Labelframe(base,
-                                    text="Completed Quests:")
+quest_history_panel = LabelFrame(base,
+                                 text="Completed Quests:",
+                                 bg="black",
+                                 fg="#7fd900",
+                                 font=("Modeseven", 12, "bold"),
+                                 bd=0,
+                                 relief="flat",
+                                 takefocus=0)
 
 quest_history_panel.grid(column=0,
                          row = 5,
@@ -255,16 +311,18 @@ quest_history_listbox = Listbox(quest_history_panel,
                                 activestyle="dotbox",
                                 font=history_font,
                                 fg="#7fd900",
-                                bg="black",
+                                bg="#0c1105",
                                 highlightcolor="#7fd900",
                                 highlightbackground="#293b10",
-                                highlightthickness=1)
+                                highlightthickness=0)
 quest_history_listbox.pack()
 
 
 
 #Initialize side panel
 f.initialize_side_panel(side_panel_contents)
+
+user_header_content.config(state="disabled")
 
 #Start the main events loop
 root.mainloop()

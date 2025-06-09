@@ -57,6 +57,8 @@ def complete_quest(quest_listbox, side_panel_contents,
         del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
         entry_field.delete(0, END)
 
+def update_user_header():
+    username = get_attribute("username")
 
 #Initializes the stats panel with default values
 def initialize_side_panel(side_panel_contents):

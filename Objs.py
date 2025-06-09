@@ -35,11 +35,11 @@ user_profile_string = '''
 
 user_stats_string = '''
 {
-    "total_quests": <total_quests>,
-    "completed": <completed>,
-    "concurrent": <concurrent>,
-    "abandoned": <abandoned>,
-    "failed": <failed>,
+    "Total quests": <total_quests>,
+    "Completed": <completed>,
+    "Concurrent": <concurrent>,
+    "Incomplete": <abandoned>,
+    "Failed": <failed>,
     "Cumulative EXP": <accumulated EXP>
 }
 '''

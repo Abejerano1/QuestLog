@@ -1,7 +1,5 @@
 from tkinter import *
 from tkinter import messagebox
-import datetime
-import Objs
 from Objs import *
 import json
 

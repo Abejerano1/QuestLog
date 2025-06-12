@@ -2,11 +2,11 @@
 # MAIN Tkinter BRANCH   #
 #########################
 import tkinter
+import datetime
 #Start with a simple to-do list GUI
 
 ##### IMPORT STATEMENTS #####
 from tkinter import *
-from tkinter import ttk as tk
 from tkinter import font
 from PIL import Image, ImageTk
 import lib as f
@@ -19,12 +19,15 @@ exp = "exp"
 user_class = "class"
 user_specialization = "specialization"
 
+current_time = datetime.datetime.now()
+current_date = f"{current_time.month}/{current_time.day}/{current_time.year}"
+
 #Loads data from user_profile JSON
-username_result = f.get_attribute(username)
-player_level_result = f.get_attribute(player_level)
-exp_result = f.get_attribute(exp)
-user_class_result = f.get_attribute(user_class)
-user_specialization_result = f.get_attribute(user_specialization)
+username_result = f.get_attribute("username")
+player_level_result = f.get_attribute("level")
+exp_result = f.get_attribute("exp")
+user_class_result = f.get_attribute("class")
+user_specialization_result = f.get_attribute("specialization")
 
 #Create root window
 #Constructs Tk object named "root"
@@ -48,6 +51,18 @@ y = int(screen_height / 2 - window_height / 2)
 
 #Window dimensions
 root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+#Menu Bar
+menu_bar = Menu(root)
+
+# Adding File Menu and commands
+file = Menu(menu_bar, tearoff = 0)
+menu_bar.add_cascade(label ='File')
+file.add_command(label ='New Profile')
+file.add_command(label ='Load Profile')
+file.add_command(label ='Save Progress')
+file.add_separator()
+file.add_command(label ='Exit', command = root.destroy)
 
 #Defines frame for containing our root window elements
 base = Frame(root,
@@ -139,7 +154,8 @@ user_header_content = Text(user_header,
                            takefocus=0)
 user_header_content.pack(side="left")
 
-header_data = ("\nLEVEL: " + f"{player_level_result}"
+header_data = (f"{current_date}"
+               "\nLEVEL: " + f"{player_level_result}"
                "\nEXP: " + f"{exp_result}"
                "\nCLASS: " + f"{user_class_result} - {user_specialization_result}")
 

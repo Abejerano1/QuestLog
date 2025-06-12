@@ -21,31 +21,3 @@ class Quest:
             return True
         else:
             return False
-
-user_profile_string = '''
-{
-    "username": "Grundel Sklanch",
-    "id_num": "1",
-    "level": "10",
-    "exp": "200",
-    "class": "Barbarian",
-    "specialization": "Blacksmith"
-}
-'''
-
-user_stats_string = '''
-{
-    "Total quests": <total_quests>,
-    "Completed": <completed>,
-    "Concurrent": <concurrent>,
-    "Incomplete": <abandoned>,
-    "Failed": <failed>,
-    "Cumulative EXP": <accumulated EXP>
-}
-'''
-
-def load_user_profile():
-    return json.loads(user_profile_string)
-
-def update_user_profile():
-    pass

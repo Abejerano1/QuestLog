@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
-
+import datetime
 import Objs
 from Objs import *
 import json
@@ -98,9 +98,9 @@ def load_random():
     pass
 
 def get_attribute(attribute_name):
-    profile_data = Objs.load_user_profile()
+    with open("user1.json", "r") as file:
+        data = json.load(file)
 
-    if attribute_name in profile_data:
-        return profile_data[attribute_name]
-    else:
-        return None
+    result = data["user_profile"][0][f"{attribute_name}"]
+
+    return result

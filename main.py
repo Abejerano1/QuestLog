@@ -82,7 +82,7 @@ completed_list = []
 
 ##### EVENT HANDLERS #####
 def add_button_handler():
-    f.add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_listbox)
+    f.add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_listbox, "user1.json")
     f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
 def del_button_handler():
@@ -90,11 +90,10 @@ def del_button_handler():
     f.del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
     f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
-
 def complete_button_handler():
     #print("Debug: side_panel_text =", side_panel_text)
     f.complete_quest(quest_listbox, side_panel_contents,
-                     quest_history_listbox, entry_field)
+                     quest_history_listbox)
     f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
 #Widgets displaying in root window
@@ -121,7 +120,7 @@ preferred_height = 100
 resized_icon = icon.resize((preferred_width, preferred_height))
 
 profile_icon = ImageTk.PhotoImage(resized_icon)
-icon_panel = tkinter.Label(icon_section, image = profile_icon, bg="black")
+icon_panel = tkinter.Label(icon_section, image=profile_icon, bg="black")
 icon_panel.pack(fill = "both", expand = False)
 
 ##### HEADER - USER STATS #####
@@ -336,7 +335,7 @@ quest_history_listbox.pack()
 
 
 #Initialize side panel
-f.initialize_side_panel(side_panel_contents)
+f.initialize_side_panel("user1.json", side_panel_contents)
 
 user_header_content.config(state="disabled")
 

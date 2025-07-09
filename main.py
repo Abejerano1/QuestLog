@@ -23,11 +23,11 @@ current_time = datetime.datetime.now()
 current_date = f"{current_time.month}/{current_time.day}/{current_time.year}"
 
 #Loads data from user_profile JSON
-username_result = f.get_attribute("username")
-player_level_result = f.get_attribute("level")
-exp_result = f.get_attribute("exp")
-user_class_result = f.get_attribute("class")
-user_specialization_result = f.get_attribute("specialization")
+username_result = f.get_user_attribute("username")
+player_level_result = f.get_user_attribute("level")
+exp_result = f.get_user_attribute("exp")
+user_class_result = f.get_user_attribute("class")
+user_specialization_result = f.get_user_attribute("specialization")
 
 #Create root window
 #Constructs Tk object named "root"
@@ -74,27 +74,39 @@ base.place(relx=0.5,
            rely=0.5,
            anchor="center")
 
-##### QUEST LIST STORAGE ####
-quest_list = []
-completed_list = []
-
 ##### GLOBAL COUNTERS #####
 
 ##### EVENT HANDLERS #####
-def add_button_handler():
-    f.add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_listbox, "user1.json")
-    f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
+def add_button_handler() -> None:
+    """
+    Initiates the process of adding a quest to the main listbox.
 
-def del_button_handler():
-    #print("Debug: side_panel_text =", side_panel_text)
+    :return: None
+    """
+
+    f.add_quest("user1.json", entry_field, quest_listbox, side_panel_contents, quest_history_listbox)
+    f.update_side_panel("user1.json", side_panel_contents, quest_listbox, quest_history_listbox)
+
+def del_button_handler() -> None:
+    """
+    Initiates the process of deleting a quest from the main listbox
+
+    :return: None
+    """
+
     f.del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
-    f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
+    f.update_side_panel("user1.json", side_panel_contents, quest_listbox, quest_history_listbox)
 
-def complete_button_handler():
-    #print("Debug: side_panel_text =", side_panel_text)
+def complete_button_handler() -> None:
+    """
+    Initiates the process of completing a selected quest.
+
+    :return: None
+    """
+
     f.complete_quest(quest_listbox, side_panel_contents,
                      quest_history_listbox)
-    f.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
+    f.update_side_panel("user1.json", side_panel_contents, quest_listbox, quest_history_listbox)
 
 #Widgets displaying in root window
 

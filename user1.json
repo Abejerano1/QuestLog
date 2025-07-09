@@ -11,20 +11,13 @@
     ],
     "user_stats": [
         {
-            "total_quests": 0,
+            "total_quests": 1,
+            "active": 1,
             "completed": 0,
-            "concurrent": 0,
             "incomplete": 0,
             "failed": 0,
             "cumulative_exp": 0
         }
     ],
-    "quests": [
-        {
-            "id_num": 1,
-            "name": "Test",
-            "exp": 10,
-            "complete": true
-        }
-    ]
+    "quests": []
 }

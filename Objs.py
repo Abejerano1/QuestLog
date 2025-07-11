@@ -8,8 +8,8 @@ class Quest:
     complete  : bool = False
 
     def __init__(self, name, exp=0):
-
-        self.id_num = Quest._next_id
+        self.id_num = Quest._
+        -next_id
         self.name = name
         self.exp = exp
         self.complete = False

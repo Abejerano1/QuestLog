@@ -1,36 +1,41 @@
-import json
+# -----------------------------------------------------------------------------
+# Company       : ??
+# Author        : Abraham Bejerano
+# Create        : ??
+#
+# Name          : Objs.py
+#
+# Description   : General obejcts used in the application
+#
+# Notes         : ??
+#
+# History       :
+#   Initial Release         ??/??/2025
+# -----------------------------------------------------------------------------
 
 class Quest:
-    _next_id = 1 # Class-level counter for unique IDs
+    __next_id : int = 1 # Class-level counter for unique IDs
+    id_num    : int = 1
+    name      : str = None
+    exp       : int = 0
+    complete  : bool = False
 
-    def __init__(self, name, exp=0):
-        # Assign current unique ID
-        self.id_num = Quest._next_id
-
-        # Increment class-level counter for the next quest
-        Quest._next_id += 1
-
+    def __init__(self, name: str, exp: int = 0):
+        self.id_num = Quest.__next_id
         self.name = name
         self.exp = exp
-        self.complete = False
+        Quest.__next_id += 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         # Returns the quest name and XP for listing purposes
-        return f"{self.id_num}. {self.name}     XP: {self.exp}"
+        return f"{self.name}     XP: {self.exp}"
 
-    def __int__(self):
-        # Returns the quest id number
+    def __int__(self) -> int:
+        # Returns the id quest id number
         return self.id_num
 
-    def status_check(self):
+    def is_complete(self) -> bool:
         # Returns the Boolean state for completion
         return self.complete
 
-    def to_dict(self):
-        # Converts the Quest instance to a dictionary
-        return {
-            "quest_id": self.id_num,
-            "name": self.name,
-            "exp": self.exp,
-            "complete": self.complete
-        }
+   

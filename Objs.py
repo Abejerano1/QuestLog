@@ -18,7 +18,7 @@ class Quest:
         return f"{self.name}     XP: {self.exp}"
 
     def __int__(self) -> int:
-        # Returns the id quest id number
+        # Returns the quest id number
         return self.id_num
 
     def is_complete(self) -> bool:

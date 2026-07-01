@@ -3,31 +3,56 @@
 #########################
 import tkinter
 import datetime
+
+import psycopg2
+
 #Start with a simple to-do list GUI
 
 ##### IMPORT STATEMENTS #####
+import lib as f
+from PIL import Image as PILImage, ImageTk
 from tkinter import *
 from tkinter import font
-from PIL import Image, ImageTk
-import lib as f
 
 ##### PLACEHOLDER TESTING DATA #####
 
-username = "username"
-player_level = "level"
-exp = "exp"
-user_class = "class"
-user_specialization = "specialization"
+username = "NULL"
+userlevel = 1
+userexp = 0
+userclass = "NULL"
+userspec = "NULL"
+user_info = None
+user_id = 1
+
+# TEST CODE =====================================
+user_info = f.get_user_info()
+
+if user_info:
+    user_name, user_level, user_exp, user_class, user_spec = user_info
+
+    username = user_name
+    userlevel = user_level
+    userexp = user_exp
+    userclass = user_class
+    userspec = user_spec
+# ===============================================
+
+#username = "username"
+#player_level = "level"
+#exp = "exp"
+#user_class = "class"
+#user_specialization = "specialization"
 
 current_time = datetime.datetime.now()
 current_date = f"{current_time.month}/{current_time.day}/{current_time.year}"
 
 #Loads data from user_profile JSON
-username_result = f.get_attribute("username")
-player_level_result = f.get_attribute("level")
-exp_result = f.get_attribute("exp")
-user_class_result = f.get_attribute("class")
-user_specialization_result = f.get_attribute("specialization")
+# username_result = f.get_attribute("username")
+# player_level_result = f.get_attribute("level")
+# exp_result = f.get_attribute("exp")
+# user_class_result = f.get_attribute("class")
+# user_specialization_result = f.get_attribute("specialization")
+
 
 #Create root window
 #Constructs Tk object named "root"
@@ -100,7 +125,7 @@ def complete_button_handler():
 
 ##### HEADER ICON #####
 icon_section = LabelFrame(base,
-                          text=f"{username_result}",
+                          text=f"{username}",
                           bg="black",
                           fg="#7fd900",
                           padx=10,
@@ -113,7 +138,7 @@ icon_section.grid(column=0,
                   row=0)
 
 icon_path = "Plankton_Meme.jpg"
-icon = Image.open(icon_path)
+icon = PILImage.open(icon_path)
 
 preferred_width = 100
 preferred_height = 100
@@ -154,9 +179,9 @@ user_header_content = Text(user_header,
 user_header_content.pack(side="left")
 
 header_data = (f"{current_date}"
-               "\nLEVEL: " + f"{player_level_result}"
-               "\nEXP: " + f"{exp_result}"
-               "\nCLASS: " + f"{user_class_result} - {user_specialization_result}")
+               "\nLEVEL: " + f"{userlevel}"
+               "\nEXP: " + f"{userexp}"
+               "\nCLASS: " + f"{userclass} - {userspec}")
 
 user_header_content.insert(END, header_data)
 

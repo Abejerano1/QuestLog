@@ -2,6 +2,9 @@ from tkinter import *
 from tkinter import messagebox
 from Objs import *
 import json
+import psycopg2
+from psycopg2 import Error
+
 
 # Global parallel list to improve implementation
 parallel_list = []
@@ -160,8 +163,9 @@ def del_all_tasks(quest_listbox, side_panel_text):
         quest_listbox.delete(0, END, quest)
 
 
-def update_user_header():
-    username = get_attribute("username")
+# def update_user_header():
+    # username = get_user_info()
+    # return username
 
 
 #Initializes the stats panel with default values
@@ -211,12 +215,43 @@ def load_random():
     pass
 
 
-def get_attribute(attribute_name):
-    with open("user1.json", "r") as file:
-        data = json.load(file)
-    result = data["user_profile"][0][f"{attribute_name}"]
-    return result
+def get_user_info():
+    try:
+        # 1. Connect to the database
+        connection = psycopg2.connect(
+            user="postgres",
+            password="password",
+            host="localhost",
+            database="questlog",
+            port="5432")
 
+        # 2. Create a new cursor object
+        cursor = connection.cursor()
+
+        # 3. Execute simple single row query by ID
+        query = f"""
+                    SELECT user_name, user_level, user_exp, user_class, user_spec
+                    FROM questlog.users
+                    WHERE user_id = 1;
+                """
+        cursor.execute(query)
+        user_info = cursor.fetchone()
+        return user_info
+
+    except Error as e:
+        print("Error while connecting to PostgreSQL", e)
+        return None
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+    # with open("user1.json", "r") as file:
+    # data = json.load(file)
+    # result = data["user_profile"][0][f"{attribute_name}"]
+    # return result
 
 def update_stats_in_json(file_path: str, stat_name: str, value: int) -> None:
     # Load

@@ -4,8 +4,6 @@
 import tkinter
 import datetime
 
-import psycopg2
-
 #Start with a simple to-do list GUI
 
 ##### IMPORT STATEMENTS #####
@@ -16,42 +14,27 @@ from tkinter import font
 
 ##### PLACEHOLDER TESTING DATA #####
 
-username = "NULL"
-userlevel = 1
-userexp = 0
-userclass = "NULL"
-userspec = "NULL"
-user_info = None
-user_id = 1
-
-# TEST CODE =====================================
+# FETCH CURRENT USER DATA
 user_info = f.get_user_info()
 
 if user_info:
-    user_name, user_level, user_exp, user_class, user_spec = user_info
+    (user_name,
+     user_level,
+     user_exp,
+     user_class,
+     user_spec) = user_info
 
     username = user_name
     userlevel = user_level
     userexp = user_exp
     userclass = user_class
     userspec = user_spec
+
 # ===============================================
 
-#username = "username"
-#player_level = "level"
-#exp = "exp"
-#user_class = "class"
-#user_specialization = "specialization"
-
+# FETCH TIME & DATE
 current_time = datetime.datetime.now()
 current_date = f"{current_time.month}/{current_time.day}/{current_time.year}"
-
-#Loads data from user_profile JSON
-# username_result = f.get_attribute("username")
-# player_level_result = f.get_attribute("level")
-# exp_result = f.get_attribute("exp")
-# user_class_result = f.get_attribute("class")
-# user_specialization_result = f.get_attribute("specialization")
 
 
 #Create root window
@@ -127,7 +110,7 @@ def complete_button_handler():
 icon_section = LabelFrame(base,
                           text=f"{username}",
                           bg="black",
-                          fg="#7fd900",
+                          fg="#63cbee",
                           padx=10,
                           pady=10,
                           font=("Modeseven", 12, "bold"),
@@ -137,7 +120,7 @@ icon_section = LabelFrame(base,
 icon_section.grid(column=0,
                   row=0)
 
-icon_path = "Plankton_Meme.jpg"
+icon_path = "usermedia/1/test_wizard"
 icon = PILImage.open(icon_path)
 
 preferred_width = 100
@@ -148,12 +131,12 @@ profile_icon = ImageTk.PhotoImage(resized_icon)
 icon_panel = tkinter.Label(icon_section, image=profile_icon, bg="black")
 icon_panel.pack(fill = "both", expand = False)
 
-##### HEADER - USER STATS #####
+##### HEADER - USER INFO #####
 
 user_header = LabelFrame(base,
                          text="User Header",
                          bg="black",
-                         fg="#7fd900",
+                         fg="#63cbee",
                          font=("Modeseven", 12, "bold"),
                          bd=0,
                          relief="flat",
@@ -189,7 +172,7 @@ user_header_content.insert(END, header_data)
 main_window = LabelFrame(base,
                          text="Quest Log",
                          font=("Modeseven", 12, "bold"),
-                         fg="#7fd900",
+                         fg="#63cbee",
                          bg="black",
                          highlightthickness=0,
                          bd=0)
@@ -218,14 +201,14 @@ quest_listbox.grid(column=1,
                   sticky="w")
 quest_listbox.yview()
 
-##### USER STATS SIDEPANEL #####
+##### USER STATS SIDE PANEL #####
 
 #side panel
 side_panel = LabelFrame(base,
                         text="Statistics",
                         font=("Modeseven", 12, "bold"),
                         bg="black",
-                        fg="#7fd900",
+                        fg="#63cbee",
                         highlightthickness=0,
                         bd=0)
 
@@ -253,7 +236,7 @@ side_panel_contents.pack()
 quest_options_container = LabelFrame(base,
                                      text="Task Options",
                                      font=("Modeseven", 12, "bold"),
-                                     fg="#7fd900",
+                                     fg="#63cbee",
                                      bg="black",
                                      highlightthickness=0,
                                      padx=10)
@@ -270,7 +253,7 @@ entry_field = Entry(quest_options_container,
                     justify="left",
                     font=entry_field_font,
                     bg="black",
-                    fg="#7fd900",
+                    fg="#63cbee",
                     insertbackground="#7fd900",
                     highlightthickness=0)
 
@@ -330,7 +313,7 @@ complete_button.grid(column=0,
 quest_history_panel = LabelFrame(base,
                                  text="Completed Quests:",
                                  bg="black",
-                                 fg="#7fd900",
+                                 fg="#ffdb14",
                                  font=("Modeseven", 12, "bold"),
                                  bd=0,
                                  relief="flat",
@@ -360,7 +343,7 @@ quest_history_listbox.pack()
 
 
 #Initialize side panel
-f.initialize_side_panel("user1.json", side_panel_contents)
+f.initialize_side_panel("1", side_panel_contents)
 
 user_header_content.config(state="disabled")
 

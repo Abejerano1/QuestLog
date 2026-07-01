@@ -169,50 +169,54 @@ def del_all_tasks(quest_listbox, side_panel_text):
 
 
 #Initializes the stats panel with default values
-def initialize_side_panel(file_path, side_panel_contents):
-    with open(file_path, "r", encoding="utf-8") as file:
-        data = json.load(file)
+def initialize_side_panel(user_id, side_panel_contents):
+    try:
+        # 1. Connect to the database
+        connection = psycopg2.connect(
+            user="postgres",
+            password="password",
+            host="localhost",
+            database="questlog",
+            port="5432")
 
-    # Safely get the first stats object
-    stats = data.get("user_stats", [{}])[0]
+        # 2. Create a new cursor object
+        cursor = connection.cursor()
 
-    # Extract numeric values (will raise if missing or wrong type
-    incomplete = stats["incomplete"]
-    complete = stats["completed"]
-    total = stats["total_quests"]
+        # 3. Execute simple single row query by ID
+        query = f"""
+                    SELECT complete_quests, incomplete_quests, total_quests
+                    FROM questlog.users
+                    WHERE user_id = {user_id};
+                """
+        cursor.execute(query)
+        result = cursor.fetchone()
 
-    side_panel_contents.insert(END, f"INCOMPLETE QUESTS: {incomplete}")
-    side_panel_contents.insert(END, f"COMPLETE QUESTS: {complete}")
-    side_panel_contents.insert(END, f"TOTAL QUESTS: {total}")
+        if result:
+            complete_quests, incomplete_quests, total_quests = result
+            side_panel_contents.insert(END, f"INCOMPLETE QUESTS: {incomplete_quests}")
+            side_panel_contents.insert(END, f"COMPLETE QUESTS: {complete_quests}")
+            side_panel_contents.insert(END, f"TOTAL QUESTS: {total_quests}")
+
+    except Error as e:
+        print("Error while connecting to PostgreSQL", e)
+        return None
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
 
 
-#Updates the data displayed on the stats panel (left)
+# Updates the data displayed on the stats panel (left)
 def update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox):
-    complete = quest_history_listbox.size()
-    incomplete = quest_listbox.size()
-    total = complete + incomplete
-
-    if quest_history_listbox.size() >= 0:
-        # Update the side panel
-        side_panel_contents.delete(0, END)
-
-        line1 = f"INCOMPLETE QUESTS: {incomplete}"
-        line2 = f"COMPLETE QUESTS: {complete}"
-        line3 = f"TOTAL QUESTS: {total}"
-
-        side_panel_contents.insert(END, line1)
-        side_panel_contents.insert(END, line2)
-        side_panel_contents.insert(END, line3)
+    return None
 
 
 #Adds a quest to the history panel (bottom of window)
 def add_quest_history(quest, quest_history_listbox):
-    quest_history_listbox.insert(END, quest)
-
-
-#Loads a random profile (for testing purposes)
-def load_random():
-    pass
+    # quest_history_listbox.insert(END, quest)
+    return None
 
 
 def get_user_info():

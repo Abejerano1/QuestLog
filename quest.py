@@ -1,29 +1,24 @@
 class Quest:
-    id_num    : int = 1
-    __next_id : int  = 1 # Class-level counter for unique IDs
-    name      : str = None
-    exp       : int = 0
-    complete  : bool = False
-
-    def __init__(self, id_num, name, desc, exp=10, complete=False):
+    def __init__(self, id_num=-1, name=None, desc=None, exp=10, complete=False, completion_date=None):
         self.id_num = id_num
         self.name = name
-        self.desc = desc
         self.exp = exp
         self.complete = complete
+        self.completion_date = completion_date
+        self.desc = desc
 
     def __int__(self) -> int:
         # Returns the quest id number
         return self.id_num
 
-    def quest_exp(self) -> int:
+    def get_quest_exp(self) -> int:
         return self.exp
 
     def __str__(self) -> str:
         # Returns the quest name, description, and exp for listing purposes
         return f"{self.name}     {self.desc}     XP: {self.exp}"
 
-    def complete_status(self) -> bool:
+    def get_complete_status(self) -> bool:
         # Returns the Boolean state for completion
         return self.complete
 
@@ -35,7 +30,7 @@ class Quest:
         """
         return
 
-    def complete_quest(quest_listbox, side_panel_contents, quest_history_listbox):
+    def set_complete(quest_listbox, side_panel_contents, quest_history_listbox):
         # Selects quest in listbox
         index = quest_listbox.curselection()
         # Updates quest completion status and commits changes to user's quest history

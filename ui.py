@@ -1,12 +1,11 @@
 import datetime
 import handlers as h
-import psycopg2
 import tkinter as tk
 import user
 from PIL import Image as PILImage, ImageTk
 from tkinter import *
 from tkinter import font
-from psycopg2 import Error
+
 
 class questlog_view:
     def __init__(self, root_window, database_connection):
@@ -48,7 +47,6 @@ class questlog_view:
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
     def build(self):
-        ##### PLACEHOLDER TESTING DATA #####
 
         # FETCH CURRENT USER DATA
         current_user = user.User(1, "Merlin", 28, 9001, "Mage", "Technomancer")
@@ -71,6 +69,9 @@ class questlog_view:
             user_exp = user_exp
             user_class = user_class
             user_spec = user_spec
+            complete_quests = complete_quests
+            incomplete_quests = incomplete_quests
+            total_quests = total_quests
 
 
         # ===============================================
@@ -188,9 +189,19 @@ class questlog_view:
                                 highlightthickness=1)
 
         quest_listbox.grid(column=1,
-                          row=2,
-                          sticky="w")
+                           row=2,
+                           sticky="w")
         quest_listbox.yview()
+
+        def initialize_quest_listbox(current_user):
+            print("Initializing quest listbox...")
+            current_active_quests = current_user.get_quests("INCOMPLETE")
+            for quest in current_active_quests:
+                list_item = f"{quest.name} -- {quest.exp}"
+                quest_listbox.insert(END, list_item)
+
+        initialize_quest_listbox(current_user)
+        print("Initialized quest listbox.")
 
         ##### USER STATS SIDE PANEL #####
 
@@ -210,27 +221,28 @@ class questlog_view:
         side_panel_font = font.Font(family="Modeseven", size=10)
 
         side_panel_contents = Text(side_panel,
-                                      width=20,
-                                      height=12,
-                                      font=side_panel_font,
-                                      fg="#7fd900",
-                                      bg="#0c1105",
-                                      highlightcolor="#7fd900",
-                                      highlightbackground="#293b10",
-                                      highlightthickness=0,
-                                      takefocus=0)
+                                   width=20,
+                                   height=12,
+                                   font=side_panel_font,
+                                   fg="#7fd900",
+                                   bg="#0c1105",
+                                   highlightcolor="#7fd900",
+                                   highlightbackground="#293b10",
+                                   highlightthickness=0,
+                                   takefocus=0)
 
         side_panel_contents.pack()
 
         # Initializes the stats panel with default values
         def initialize_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents):
             side_panel_data = (f"INCOMPLETE QUESTS: {incomplete_quests}"
-                                f"\nCOMPLETE QUESTS: {complete_quests}"
-                                f"\nTOTAL QUESTS: {total_quests}")
+                               f"\nCOMPLETE QUESTS: {complete_quests}"
+                               f"\nTOTAL QUESTS: {total_quests}")
             side_panel_contents.insert(END, side_panel_data)
 
         initialize_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents)
 
+        # ==================================================================================================================== #
 
         ##### QUEST OPTIONS #####
         quest_options_container = LabelFrame(self.base,
@@ -245,6 +257,8 @@ class questlog_view:
                                      sticky="e",
                                      padx=5,
                                      pady=5)
+
+        # ==================================================================================================================== #
 
         ##### ENTRY FIELD #####
         entry_field_font = font.Font(family="Modeseven", size=10)

@@ -57,8 +57,6 @@ def complete_quest(quest_listbox, side_panel_contents, quest_history_listbox):
         print(f"complete_quest - quest: {quest}")
         # Sends quest to history window
         add_quest_history(quest, quest_history_listbox)
-        # Updates quest in user JSON
-        complete_quest_in_json("user1.json", index)
         # Removes quest from main window
         del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
 

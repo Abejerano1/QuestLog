@@ -209,7 +209,7 @@ class questlog_view:
 
         side_panel_font = font.Font(family="Modeseven", size=10)
 
-        side_panel_contents = Listbox(side_panel,
+        side_panel_contents = Text(side_panel,
                                       width=20,
                                       height=12,
                                       font=side_panel_font,
@@ -217,15 +217,17 @@ class questlog_view:
                                       bg="#0c1105",
                                       highlightcolor="#7fd900",
                                       highlightbackground="#293b10",
-                                      highlightthickness=0)
+                                      highlightthickness=0,
+                                      takefocus=0)
 
         side_panel_contents.pack()
 
         # Initializes the stats panel with default values
         def initialize_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents):
-            side_panel_contents.insert(END, f"INCOMPLETE QUESTS: {incomplete_quests}")
-            side_panel_contents.insert(END, f"COMPLETE QUESTS: {complete_quests}")
-            side_panel_contents.insert(END, f"TOTAL QUESTS: {total_quests}")
+            side_panel_data = (f"INCOMPLETE QUESTS: {incomplete_quests}"
+                                f"\nCOMPLETE QUESTS: {complete_quests}"
+                                f"\nTOTAL QUESTS: {total_quests}")
+            side_panel_contents.insert(END, side_panel_data)
 
         initialize_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents)
 

@@ -28,7 +28,7 @@ class User:
 
             # 3. Execute simple single row query by ID
             query = f"""
-                        SELECT user_name, user_level, user_exp, user_class, user_spec
+                        SELECT *
                         FROM questlog.users
                         WHERE user_id = {self.id_num};
                     """

@@ -51,21 +51,27 @@ class questlog_view:
         ##### PLACEHOLDER TESTING DATA #####
 
         # FETCH CURRENT USER DATA
-        current_user = user.User(1, "Merlin", 28, "Mage", "Technomancer")
+        current_user = user.User(1, "Merlin", 28, 9001, "Mage", "Technomancer")
         user_info = current_user.get_info()
 
         if user_info:
-            (user_name,
+            (user_idnum,
+             user_name,
              user_level,
              user_exp,
              user_class,
-             user_spec) = user_info
+             user_spec,
+             complete_quests,
+             incomplete_quests,
+             total_quests) = user_info
 
-            username = user_name
-            userlevel = user_level
-            userexp = user_exp
-            userclass = user_class
-            userspec = user_spec
+            user_id = user_idnum
+            user_name = user_name
+            user_level = user_level
+            user_exp = user_exp
+            user_class = user_class
+            user_spec = user_spec
+
 
         # ===============================================
 
@@ -82,7 +88,7 @@ class questlog_view:
 
         ##### HEADER ICON #####
         icon_section = LabelFrame(self.base,
-                                  text=f"{username}",
+                                  text=f"{user_name}",
                                   bg="black",
                                   fg="#63cbee",
                                   padx=10,
@@ -144,9 +150,9 @@ class questlog_view:
         user_header_content.pack(side="left")
 
         header_data = (f"{current_date}"
-                       "\nLEVEL: " + f"{userlevel}"
-                       "\nEXP: " + f"{userexp}"
-                       "\nCLASS: " + f"{userclass} - {userspec}")
+                       "\nLEVEL: " + f"{user_level}"
+                       "\nEXP: " + f"{user_exp}"
+                       "\nCLASS: " + f"{user_class} - {user_spec}")
 
         user_header_content.insert(END, header_data)
 
@@ -215,6 +221,13 @@ class questlog_view:
 
         side_panel_contents.pack()
 
+        # Initializes the stats panel with default values
+        def initialize_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents):
+            side_panel_contents.insert(END, f"INCOMPLETE QUESTS: {incomplete_quests}")
+            side_panel_contents.insert(END, f"COMPLETE QUESTS: {complete_quests}")
+            side_panel_contents.insert(END, f"TOTAL QUESTS: {total_quests}")
+
+        initialize_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents)
 
 
         ##### QUEST OPTIONS #####
@@ -324,42 +337,3 @@ class questlog_view:
                                         highlightbackground="#293b10",
                                         highlightthickness=0)
         quest_history_listbox.pack()
-
-        #Initializes the stats panel with default values
-        def initialize_side_panel(user_id, side_panel_contents):
-            try:
-                # 1. Connect to the database
-                connection = psycopg2.connect(
-                    user="postgres",
-                    password="password",
-                    host="localhost",
-                    database="questlog",
-                    port="5432")
-
-                # 2. Create a new cursor object
-                cursor = connection.cursor()
-
-                # 3. Execute simple single row query by ID
-                query = f"""
-                            SELECT complete_quests, incomplete_quests, total_quests
-                            FROM questlog.users
-                            WHERE user_id = {user_id};
-                        """
-                cursor.execute(query)
-                result = cursor.fetchone()
-
-                if result:
-                    complete_quests, incomplete_quests, total_quests = result
-                    side_panel_contents.insert(END, f"INCOMPLETE QUESTS: {incomplete_quests}")
-                    side_panel_contents.insert(END, f"COMPLETE QUESTS: {complete_quests}")
-                    side_panel_contents.insert(END, f"TOTAL QUESTS: {total_quests}")
-
-            except Error as e:
-                print("Error while connecting to PostgreSQL", e)
-                return None
-
-            finally:
-                if (connection):
-                    cursor.close()
-                    connection.close()
-                    print("PostgreSQL connection is closed")

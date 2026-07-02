@@ -1,87 +1,46 @@
+import json
 from tkinter import *
 from tkinter import messagebox
-from Objs import *
-import json
+
 import psycopg2
 from psycopg2 import Error
-
 
 # Global parallel list to improve implementation
 parallel_list = []
 
-def add_quest(entry_field, quest_listbox, side_panel_contents, quest_history_listbox, file_path) -> None:
+def add_quest(user_id, entry_field, quest_listbox, side_panel_contents, quest_history_listbox, file_path) -> None:
     """
     Adds a quest to the main list.
 
     Args:
-        :param entry_field: The entry widget where the quest name is entered.
-        :param quest_listbox: The listbox widget displaying the list of quests.
-        :param side_panel_contents: The side panel widget displaying the quest state.
-        :param quest_history_listbox: The listbox widget displaying quest history.
-        :param file_path: The file path where the quest state is stored.
+        :param entry_field:
+        :param quest_listbox:
+        :param side_panel_contents:
+        :param quest_history_listbox:
+        :param file_path:
         :return: None
     """
 
     # Stores selected quest
     quest_name = entry_field.get()
-    if not quest_name:
-        messagebox.showerror(title="Warning!", message="Please enter a quest.")
+    quest_description = entry_field.get()
+    quest_exp = entry_field.get()
+    if not (quest_name, quest_description, quest_exp):
+        messagebox.showerror(title="Warning!", message="Please enter a value.")
         return
 
-    # Creates new quest object
-    new_quest = Quest(quest_name, exp=10)
-    parallel_list.append(new_quest) # keep the real object
-
-    # Inserts quest at the end of main listbox
-    quest_listbox.insert(END, str(new_quest)) # store only the display string
-
-    # Clears entry field
-    entry_field.delete(0, END)
-
-    # Updates the stats panel
-    update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
-
-    # Updates quest count in user JSON
-    add_quest_to_json(file_path, new_quest)
-
-def add_quest_to_json(file_path, quest):
-    """
-    Updates the JSON file with the new quest.
-
-    Args:
-        :param file_path: The path to the JSON file.
-        :param quest: The quest object to be added.
-        :return: None
-    """
-    try:
-        # Load existing data from JSON file
-        with open(file_path, "r+", encoding="utf-8") as file:
-            data = json.load(file)
-
-            # Ensure 'quests' is a list
-            if "quests" not in data:
-                data["quests"] = []
-
-            # Append the new quest to the 'quests' list
-            data["quests"].append(quest.to_dict())
-            parallel_list.append(quest.to_dict())
-            print(f"add_quest_to_json - parallel_list[0] id_num: {parallel_list[0].id_num}")
-
-            # Moves file pointer back to the beginning of the file
-            file.seek(0)
-            # Writes "data" dictionary to the file in JSON format
-            json.dump(data, file, indent=4)
-            # Cuts off any content remaining in the file after the current
-            # file pointer position.
-            file.truncate()
-
-
-    except FileNotFoundError:
-        messagebox.showerror(title="Error", message="The specified file was not found.")
-    except json.JSONDecodeError:
-        messagebox.showerror(title="Error", message="Failed to decode JSON. The file may be corrupted.")
-    except Exception as e:
-        messagebox.showerror(title="Error", message=f"An unexpected error occurred: {e}")
+    # # Creates new quest object
+    # new_quest = Quest(quest_name, exp=10)
+    # parallel_list.append(new_quest) # keep the real object
+    #
+    # # Inserts quest at the end of main listbox
+    # quest_listbox.insert(END, str(new_quest)) # store only the display string
+    #
+    # # Clears entry field
+    # entry_field.delete(0, END)
+    #
+    # # Updates the stats panel
+    # # update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
 
 
 def complete_quest(quest_listbox, side_panel_contents, quest_history_listbox):
@@ -102,49 +61,6 @@ def complete_quest(quest_listbox, side_panel_contents, quest_history_listbox):
         complete_quest_in_json("user1.json", index)
         # Removes quest from main window
         del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
-
-
-def complete_quest_in_json(file_path, index):
-
-    # if not index:
-    #    messagebox.showwarning(title="Warning!", message="ERROR in complete_quest_in_json!")
-
-    print(f"complete_quest_in_json - index: {index}")
-
-    # Retrieve the actual Quest object from the parallel list
-    quest_id = parallel_list[0].id_num
-    print(f"complete_quest_in_json - quest_id: {quest_id}")
-
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-            # Debug print
-            print(f"complete_quest_in_json - data:")
-            for line in data["quests"]:
-                print(line)
-
-        for q in data.get("quests", []):
-            if q.get("id_num") == quest_id:
-                #Debug print
-                print(f"JSON quest name: {q.get("name")}")
-                # Updates the quest's completion status
-                q["complete"] = True
-                break
-            else:
-                messagebox.showwarning(title="Warning!", message="The quest ID number is invalid.")
-                return
-
-        with open(file_path, "w", encoding="utf-8") as file:
-            json.dump(data, file, indent=4)
-
-    except FileNotFoundError:
-        messagebox.showerror(title="Error", message="The specified file was not found.")
-    except json.JSONDecodeError:
-        messagebox.showerror(title="Error", message="Failed to decode JSON. The file may be corrupted.")
-    except TypeError as e:
-        messagebox.showerror(title="Error", message=f"TypeError: {e}")
-
 
 
 def del_quest(quest_listbox, side_panel_contents, quest_history_listbox):

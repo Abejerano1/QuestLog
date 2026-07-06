@@ -74,7 +74,7 @@ class User:
             # 3. Execute simple single row query by ID
             query = f"""
                         SELECT *
-                        FROM questlog.u_{self.user_name}_quests
+                        FROM questlog.u_{self.id_num}_quests
                         WHERE quest_status = %s;
                     """
             cursor.execute(query, (status,))

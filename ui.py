@@ -1,10 +1,13 @@
 import datetime
 import handlers as h
 import tkinter as tk
+
+import quest
 import user
 from PIL import Image as PILImage, ImageTk
 from tkinter import *
 from tkinter import font
+from tkinter import ttk
 
 
 class questlog_view:
@@ -46,6 +49,7 @@ class questlog_view:
         # Window dimensions
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
+
     def build(self):
 
         # FETCH CURRENT USER DATA
@@ -73,19 +77,70 @@ class questlog_view:
             incomplete_quests = incomplete_quests
             total_quests = total_quests
 
+        # Create a QuestManager object to handle quest fetching
+        quest_manager = quest.QuestManager()
 
-        # ===============================================
+        # Fetch master list of quests
+        master_list = quest_manager.get_all_quests()
+
+        # DEBUG: PRINT ALL QUESTS
+        for item in master_list:
+            print(f"[{item.name}]")
+
+        # Create dictionary to map selection to corresponding database entry
+        quest_lookup = {quest.name: quest for quest in master_list}
+
+        # Create a list of only the quest names for UI purposes
+        dropdown_options = list(quest_lookup.keys())
 
         # FETCH TIME & DATE
         current_time = datetime.datetime.now()
         current_date = f"{current_time.month}/{current_time.day}/{current_time.year}"
+
+        # ===============================================
+
         # Menu Bar
 
-        ##### QUEST LIST STORAGE ####
-        quest_list = []
-        completed_list = []
+        # Populates the main quest listbox with current user's quests
+        def populate_quest_log(current_user):
+            # DEBUG PRINT STATEMENT
+            print("running initialize_quest_listbox()...")
 
-        #Widgets displaying in root window
+            # Retrieve all of current user's incomplete quests
+            current_active_quests = current_user.get_quests("INCOMPLETE")
+            for quest in current_active_quests:
+                list_item = f"{quest.name} - EXP: {quest.exp}"
+                quest_listbox.insert(END, list_item)
+
+        def update_quest_log(current_user):
+            # DEBUG PRINT STATEMENT
+            print("running update_quest_listbox()...")
+
+            # Clear listbox
+            quest_listbox.delete(0, END)
+
+            current_active_quests = current_user.get_quests("INCOMPLETE")
+
+            # Repopulate listbox
+            for quest in current_active_quests:
+                list_item = f"{quest.name} - EXP: {quest.exp}"
+                quest_listbox.insert(END, list_item)
+
+            entry_field.set("Select quest...")
+
+        # Initializes the stats panel with default values
+        def populate_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents):
+            # Gather the variables
+            incomplete_entry = (f"INCOMPLETE QUESTS: {incomplete_quests}")
+            complete_entry = (f"COMPLETE QUESTS: {complete_quests}")
+            total_entry = (f"TOTAL QUESTS: {total_quests}")
+
+            # List them
+            side_panel_contents.insert(END, incomplete_entry)
+            side_panel_contents.insert(END, complete_entry)
+            side_panel_contents.insert(END, total_entry)
+
+        # Widgets displaying in root window
 
         ##### HEADER ICON #####
         icon_section = LabelFrame(self.base,
@@ -193,15 +248,14 @@ class questlog_view:
                            sticky="w")
         quest_listbox.yview()
 
-        def initialize_quest_listbox(current_user):
-            print("Initializing quest listbox...")
-            current_active_quests = current_user.get_quests("INCOMPLETE")
-            for quest in current_active_quests:
-                list_item = f"{quest.name} -- {quest.exp}"
-                quest_listbox.insert(END, list_item)
+        print("Initializing quest_listbox...")
+        # INITIALIZE QUEST_LISTBOX
+        try:
+            populate_quest_log(current_user)
+            print("Initialized quest listbox.")
+        except Exception as e:
+            print(f"Failed to initialize quest listbox: {e}")
 
-        initialize_quest_listbox(current_user)
-        print("Initialized quest listbox.")
 
         ##### USER STATS SIDE PANEL #####
 
@@ -220,27 +274,21 @@ class questlog_view:
 
         side_panel_font = font.Font(family="Modeseven", size=10)
 
-        side_panel_contents = Text(side_panel,
-                                   width=20,
-                                   height=12,
-                                   font=side_panel_font,
-                                   fg="#7fd900",
-                                   bg="#0c1105",
-                                   highlightcolor="#7fd900",
-                                   highlightbackground="#293b10",
-                                   highlightthickness=0,
-                                   takefocus=0)
+        side_panel_contents = Listbox(side_panel,
+                                      width=20,
+                                      height=12,
+                                      font=side_panel_font,
+                                      fg="#7fd900",
+                                      bg="#0c1105",
+                                      highlightcolor="#7fd900",
+                                      highlightbackground="#293b10",
+                                      highlightthickness=0,
+                                      takefocus=0)
 
         side_panel_contents.pack()
 
-        # Initializes the stats panel with default values
-        def initialize_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents):
-            side_panel_data = (f"INCOMPLETE QUESTS: {incomplete_quests}"
-                               f"\nCOMPLETE QUESTS: {complete_quests}"
-                               f"\nTOTAL QUESTS: {total_quests}")
-            side_panel_contents.insert(END, side_panel_data)
-
-        initialize_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents)
+        # INITIALIZE SIDE PANEL
+        populate_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents)
 
         # ==================================================================================================================== #
 
@@ -260,32 +308,33 @@ class questlog_view:
 
         # ==================================================================================================================== #
 
-        ##### ENTRY FIELD #####
+        ##### QUEST ADDITION #####
         entry_field_font = font.Font(family="Modeseven", size=10)
 
-        entry_field = Entry(quest_options_container,
-                            justify="left",
-                            font=entry_field_font,
-                            bg="black",
-                            fg="#63cbee",
-                            insertbackground="#7fd900",
-                            highlightthickness=0)
+        entry_field = ttk.Combobox(quest_options_container,
+                                   justify="left",
+                                   font=entry_field_font,
+                                   state="readonly")
 
         entry_field.grid(column=1,
                          row=0,
                          padx=5)
 
-        #Submit entry on Enter keypress:
-        entry_field.bind("<Return>", lambda event: h.add_button_handler)
+        # Populate quest selection list
+        entry_field['values'] = dropdown_options
+        if (master_list):
+            entry_field.set("Select quest...")
+        else:
+            entry_field.set("No quests selected.")
 
         ##### ADD ENTRY BUTTON #####
         add_button = Button(quest_options_container,
                             text="Add quest",
                             font=("Modeseven", 10),
-                            fg="#7fd900",
+                            fg="white",
                             bg="black",
                             highlightthickness=0,
-                            command=h.add_button_handler,
+                            command=lambda: h.add_button_handler(current_user, entry_field, update_quest_log),
                             width=10,
                             bd=0)
 
@@ -297,7 +346,7 @@ class questlog_view:
         del_button = Button(quest_options_container,
                             text="Delete quest",
                             font=("Modeseven", 10),
-                            fg="#7fd900",
+                            fg="white",
                             bg="black",
                             highlightthickness=0,
                             command=h.del_button_handler,
@@ -312,7 +361,7 @@ class questlog_view:
         complete_button = Button(quest_options_container,
                                  text="Mark Complete",
                                  font=("Modeseven", 10),
-                                 fg="#7fd900",
+                                 fg="white",
                                  bg="black",
                                  highlightthickness=0,
                                  command=h.complete_button_handler,

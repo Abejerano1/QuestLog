@@ -43,16 +43,23 @@ class QuestManager:
         return self.desc
 
     def get_quest_exp(self) -> int:
+        """
+        Returns the exp of the calling Quest object
+        :return: Integer Quest object exp attribute
+        """
         return self.exp
 
     def get_complete_status(self) -> bool:
-        # Returns the Boolean state for completion
+        """
+        Returns the completion status of the calling Quest object
+        :return: Boolean
+        """
         return self.complete
 
     def get_all_quests(self):
         """
         Returns a list of all quests
-        :return: a list quests
+        :return: A list of all quests
         """
         # Create an array to store quest list
         result_quest_list = []
@@ -77,6 +84,7 @@ class QuestManager:
                     """
             cursor.execute(query)
 
+            # Fetch every item in the master quest list
             quest_list = cursor.fetchall()
             for quest in quest_list:
                 # Turn each database row into a Python Quest object
@@ -148,6 +156,13 @@ class QuestManager:
             print("Error while connecting to PostgreSQL", e)
 
     def set_complete(quest_listbox, side_panel_contents, quest_history_listbox):
+        """
+        Updates a quest's completion status to 'COMPLETE'
+        :param side_panel_contents: TBD
+        :param quest_history_listbox: TBD
+        :return: None
+        """
+
         # Selects quest in listbox
         index = quest_listbox.curselection()
         # Updates quest completion status and commits changes to user's quest history

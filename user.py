@@ -64,6 +64,11 @@ class User:
 
 
     def get_quests(self, status):
+        """
+        Function that returns all quests belonging to a User
+        :param status: 'INCOMPLETE'/'COMPLETE'
+        :return: List of quests
+        """
         # Create an array to store quest list
         result_quest_list = []
 

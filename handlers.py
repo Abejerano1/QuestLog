@@ -4,6 +4,14 @@ import ui
 
 ##### EVENT HANDLERS #####
 def add_button_handler(current_user, entry_field, refresh_callback):
+    """
+    Handles quest addition button procedure.
+    :param current_user: The current user.
+    :param entry_field: The selected quest.
+    :param refresh_callback: The function we are passing back to
+        in order to refresh the list of quests.
+    :return: None
+    """
     print("Debug: Calling add_button_handler\n")
     # 1. Get the selected quest
     selection = entry_field.get()
@@ -33,6 +41,10 @@ def del_button_handler():
     # Update quest history listbox
 
 def complete_button_handler():
+    """
+    Handles quest completion button procedure.
+    :return: None
+    """
     #print("Debug: side_panel_text =", side_panel_text)
     quest.set_complete(quest_listbox, side_panel_contents,
                      quest_history_listbox)

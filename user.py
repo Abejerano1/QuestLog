@@ -21,6 +21,10 @@ class User:
         self.total_quests = total_quests
 
     def get_info(self):
+        """
+        Function that returns all info about a User
+        :return: User object
+        """
         try:
             # 1. Connect to the database
             connection = psycopg2.connect(
@@ -40,7 +44,11 @@ class User:
                         WHERE user_id = {self.id_num};
                     """
             cursor.execute(query)
+
+            # 4. Store one row of data into user_info
             user_info = cursor.fetchone()
+
+            # 5. Return the row of data
             return user_info
 
         except Error as e:
@@ -48,6 +56,7 @@ class User:
             return None
 
         finally:
+            # Close the connection when finished
             if (connection):
                 cursor.close()
                 connection.close()
@@ -99,6 +108,7 @@ class User:
             return None
 
         finally:
+            # Close the connection
             if (connection):
                 cursor.close()
                 connection.close()

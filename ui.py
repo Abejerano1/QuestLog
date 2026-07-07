@@ -12,6 +12,11 @@ from tkinter import ttk
 
 class questlog_view:
     def __init__(self, root_window, database_connection):
+        """
+        questlog_view class constructor
+        :param root_window: The window within which the GUI will exist.
+        :param database_connection: The database from which all data will be manipulated.
+        """
         # Creates the root window
         self.root = root_window
         self.database_connection = database_connection
@@ -30,6 +35,10 @@ class questlog_view:
                         anchor="center")
 
     def window_setup(self):
+        """
+        Function that configures the main program window.
+        :return: None
+        """
         # Centers and sizes the main window
         self.root.title("Quest Log")
         self.root.configure(background = "black")
@@ -51,11 +60,15 @@ class questlog_view:
 
 
     def build(self):
-
+        """
+        Function that builds the main program window.
+        :return: None
+        """
         # FETCH CURRENT USER DATA
         current_user = user.User(1, "Merlin", 28, 9001, "Mage", "Technomancer")
         user_info = current_user.get_info()
 
+        # If user info exists, assign it to variable user_info
         if user_info:
             (user_idnum,
              user_name,
@@ -67,6 +80,8 @@ class questlog_view:
              incomplete_quests,
              total_quests) = user_info
 
+            # Assign variables for user attributes
+            # (It may be better to use accessors instead later on)
             user_id = user_idnum
             user_name = user_name
             user_level = user_level
@@ -82,10 +97,6 @@ class questlog_view:
 
         # Fetch master list of quests
         master_list = quest_manager.get_all_quests()
-
-        # DEBUG: PRINT ALL QUESTS
-        for item in master_list:
-            print(f"[{item.name}]")
 
         # Create dictionary to map selection to corresponding database entry
         quest_lookup = {quest.name: quest for quest in master_list}
@@ -103,22 +114,34 @@ class questlog_view:
 
         # Populates the main quest listbox with current user's quests
         def populate_quest_log(current_user):
+            """
+            Function that populates the central quest log listbox.
+            :param current_user: User object passed for their corresponding quest log
+            :return: None
+            """
             # DEBUG PRINT STATEMENT
             print("running initialize_quest_listbox()...")
 
             # Retrieve all of current user's incomplete quests
             current_active_quests = current_user.get_quests("INCOMPLETE")
+            # Insert quest entry into the end of the quest log listbox
             for quest in current_active_quests:
                 list_item = f"{quest.name} - EXP: {quest.exp}"
                 quest_listbox.insert(END, list_item)
 
         def update_quest_log(current_user):
+            """
+            Function that refreshes (updates) the central quest log listbox.
+            :param current_user: The list belonging to the current user that is being updated.
+            :return: None
+            """
             # DEBUG PRINT STATEMENT
             print("running update_quest_listbox()...")
 
             # Clear listbox
             quest_listbox.delete(0, END)
 
+            # Assign the list of active quests into current_active_quests
             current_active_quests = current_user.get_quests("INCOMPLETE")
 
             # Repopulate listbox
@@ -130,6 +153,15 @@ class questlog_view:
 
         # Initializes the stats panel with default values
         def populate_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents):
+            """
+            Function that populates the side statistics panel.
+            :param complete_quests: Number of user's completed quests.
+            :param incomplete_quests: Number of user's incomplete quests.
+            :param total_quests: Number of all of user's quests.
+            :param side_panel_contents: The side panel's listbox where the statistics
+                    can be seen.
+            :return: None
+            """
             # Gather the variables
             incomplete_entry = (f"INCOMPLETE QUESTS: {incomplete_quests}")
             complete_entry = (f"COMPLETE QUESTS: {complete_quests}")
@@ -157,9 +189,9 @@ class questlog_view:
                           row=0)
 
         icon_path = "usermedia/1/test_wizard"
+
+        # DEBUG
         print(f"Loading user icon from {icon_path}...")
-
-
         icon = PILImage.open(icon_path)
         if icon:
             print("Loaded user icon.")

@@ -1,3 +1,5 @@
+from multiprocessing import connection
+
 import psycopg2
 from psycopg2 import Error
 from psycopg2 import sql
@@ -18,8 +20,6 @@ class Quest:
     def __str__(self) -> str:
         # Returns the quest name, description, and exp for listing purposes
         return f"{self.name}     {self.desc}     EXP: {self.exp}"
-
-class QuestManager:
 
     def get_id(self) -> int:
         """
@@ -60,27 +60,52 @@ class QuestManager:
         """
         return self.complete
 
+class QuestManager:
+    def __init__(self):
+        """
+        Initialize the manager and establish a single
+        persistent connection.
+        """
+        try:
+            # Connect to the database
+            print("Connecting to database...")
+            self.connection = psycopg2.connect(
+                user="postgres",
+                password="password",
+                host="localhost",
+                database="questlog",
+                port="5432")
+            print("Database connected!")
+
+        except Error as e:
+            print("Error while connecting to PostgreSQL", e)
+            self.connection = None
+
+    def close(self):
+        """
+        Function that safely closes the connection
+        when the application closes.
+        """
+        if self.connection:
+            print("Closing connection...")
+            self.connection.close()
+            print("Database connection closed safely.")
 
     def get_all_quests(self):
         """
         Returns a list of all quests
         :return: A list of all quests
         """
+        if not self.connection:
+            return
+
         # Create an array to store quest list
         result_quest_list = []
 
-        print("Getting all quests...")
+        print("DEBUG: Getting all quests...")
         try:
-            # 1. Connect to the database
-            connection = psycopg2.connect(
-                user="postgres",
-                password="password",
-                host="localhost",
-                database="questlog",
-                port="5432")
-
-            # 2. Create a new cursor object
-            cursor = connection.cursor()
+            # 1. Create a new cursor object
+            cursor = self.connection.cursor()
 
             # 3. Execute simple single row query by ID
             query = f"""
@@ -115,7 +140,9 @@ class QuestManager:
         :param quest_name: Name of the quest
         :return: None
         """
-        print("Entered quest.add_quest.")
+        print("DEBUG: Entered quest.add_quest.")
+        if not self.connection:
+            return
 
         # Case: Check if valid quest was selected before SQL query
         if not quest_name or quest_name in ["Select quest...", "No quests selected."]:
@@ -123,24 +150,13 @@ class QuestManager:
             return
 
         try:
-            print("Connecting to database...")
-            # 1. Connect to the database
-            connection = psycopg2.connect(
-                user="postgres",
-                password="password",
-                host="localhost",
-                database="questlog",
-                port="5432")
+            # Create a new cursor object
+            cursor = self.connection.cursor()
 
-            print("Database connected!")
-
-            # 2. Create a new cursor object
-            cursor = connection.cursor()
-
-            print(f"table_name = u_{user_id}_quests")
+            print(f"DEBUG: table_name = u_{user_id}_quests")
             table_name = f"u_{user_id}_quests"
 
-            print("Executing query...")
+            print("DEBUG: Executing query...")
             query = sql.SQL("""
                         INSERT INTO questlog.{table} (quest_name, quest_exp, quest_status, quest_id)
                         SELECT quest_name, quest_exp, 'INCOMPLETE', quest_id
@@ -151,12 +167,11 @@ class QuestManager:
 
             print("Query executed!")
             # Commit changes
-            connection.commit()
+            self.connection.commit()
 
             # Clean up connections
             cursor.close()
-            connection.close()
-            print("Quest successfully added!")
+            print("DEBUG: Quest successfully added!")
 
         except Error as e:
             print("Error while connecting to PostgreSQL", e)
@@ -171,7 +186,7 @@ class QuestManager:
         """
 
         # DEBUG
-        print("Entered quest.del_quest.")
+        print("DEBUG: Entered quest.del_quest.")
 
         # Case: Check if valid quest was selected before SQL query
         if not quest_name:
@@ -179,66 +194,65 @@ class QuestManager:
             return
 
         try:
-            print("Connecting to database...")
-            # 1. Connect to the database
-            connection = psycopg2.connect(
-                user="postgres",
-                password="password",
-                host="localhost",
-                database="questlog",
-                port="5432")
+            cursor = self.connection.cursor()
 
-            print("Database connected!")
-
-            # 2. Create a new cursor object
-            cursor = connection.cursor()
-
-            print(f"table_name = u_{user_id}_quests")
             table_name = f"u_{user_id}_quests"
+            print(f"DEBUG: table_name = {table_name}")
 
-            print("Executing query...")
+            print("DEBUG: Executing query...")
             query = sql.SQL("""
                                 DELETE FROM questlog.{table}
                                 WHERE quest_name = %s;
                             """).format(table=sql.Identifier(table_name))
             cursor.execute(query, (quest_name,))
 
-            print("Query executed!")
+            print("DEBUG: Query executed!")
             # Commit changes
-            connection.commit()
-
+            self.connection.commit()
             # Clean up connections
             cursor.close()
-            connection.close()
-            print("Quest successfully deleted!")
-            print("Exiting quest.del_quest...")
+
+            print(f"DEBUG: Quest {quest_name} successfully deleted!")
+            print("DEBUG: Exiting quest.del_quest...")
 
         except Error as e:
             print("Error while connecting to PostgreSQL", e)
 
 
-    def set_complete(quest_listbox, side_panel_contents, quest_history_listbox):
+    def set_complete(self, user_id, quest_name):
         """
         Updates a quest's completion status to 'COMPLETE'
         :param side_panel_contents: TBD
         :param quest_history_listbox: TBD
         :return: None
         """
+        if not quest_name:
+            print("ERROR: No valid quest selected.")
+            return
 
-        # Selects quest in listbox
-        index = quest_listbox.curselection()
-        # Updates quest completion status and commits changes to user's quest history
-        index.complete = True
-        # Debug print statement
-        print(f"complete_quest - index: {index}")
+        try:
+            cursor = self.connection.cursor()
 
-        if not index:
-            messagebox.showwarning(title="Warning!", message="You must select a quest!")
-        else:
-            # Gets the actual Quest object
-            quest = quest_listbox.get(index)
-            print(f"complete_quest - quest: {quest}")
-            # Sends quest to history window
-            add_quest_history(quest, quest_history_listbox)
-            # Removes quest from main window
-            del_quest(quest_listbox, side_panel_contents, quest_history_listbox)
+            table_name = f"u_{user_id}_quests"
+            print(f"DEBUG: table_name = {table_name}")
+
+            print("DEBUG: Executing query...")
+            query = sql.SQL("""
+                UPDATE questlog.{table}
+                set quest_status = 'COMPLETE'
+                WHERE quest_name = %s;
+                """).format(table=sql.Identifier(table_name))
+            cursor.execute(query, (quest_name,))
+
+            print("DEBUG: Query executed!")
+
+            # Commit changes
+            self.connection.commit()
+            # Clean up
+            cursor.close()
+
+            print(f"DEBUG: Quest {quest_name} successfully updated!")
+            print("DEBUG: Exiting quest.set_complete...")
+
+        except Error as e:
+            print("Error while connecting to PostgreSQL", e)

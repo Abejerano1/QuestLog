@@ -41,13 +41,13 @@ def del_button_handler(current_user, quest_listbox, refresh_callback):
     full_display_text = quest_listbox.get(selection_index[0])
     # Then, extract just the quest name by splitting at the separator
     quest_name = full_display_text.split(" - ")[0].strip()
-    print(f"Quest name: {quest_name}")
+    print(f"DEBUG: Quest name: {quest_name}")
 
     # 2. call quest.del_quest()
     # Create quest manager to access quest functions
     manager = quest.QuestManager()
 
-    print("Debug: Calling del_button_handler\n")
+    print("DEBUG: Calling del_button_handler\n")
     manager.del_quest(current_user.id_num, quest_name)
 
     # 3. Call refresh function
@@ -58,19 +58,29 @@ def del_button_handler(current_user, quest_listbox, refresh_callback):
 
     # Update quest history listbox
 
-def complete_button_handler():
+def complete_button_handler(current_user, quest_listbox, refresh_callback):
     """
     Handles quest completion button procedure.
     :return: None
     """
     # 1. Get the selected quest
-    # something something.get
+    print("DEBUG: Getting selected quest...")
+    selection_index = quest_listbox.curselection()
+    # Isolate the name portion of the selection
+    full_display_text = quest_listbox.get(selection_index[0])
+    # Then, extract just the quest name by splitting at the separator
+    quest_name = full_display_text.split(" - ")[0].strip()
+    print(f"DEBUG: Quest name: {quest_name}")
 
-    #print("Debug: side_panel_text =", side_panel_text)
-    quest.set_complete(quest_listbox, side_panel_contents,
-                     quest_history_listbox)
-    # 2. Update side panel
-    # ui.update_side_panel(side_panel_contents, quest_listbox, quest_history_listbox)
+    # 2. Call quest.set_complete()
+    # Create quest manager to access quest functions
+    manager = quest.QuestManager()
 
-    # 3. Update quest history
-    # ui.update_quest_history
+    print("DEBUG: Calling complete_button_handler\n")
+    manager.set_complete(current_user.id_num, quest_name)
+
+    # 3. Call refresh function
+    refresh_callback(current_user)
+
+    # 4. Update side panel
+    # 5. Update quest history panel

@@ -120,7 +120,7 @@ class questlog_view:
             :return: None
             """
             # DEBUG PRINT STATEMENT
-            print("running initialize_quest_listbox()...")
+            print("DEBUG: Running initialize_quest_listbox()...")
 
             # Retrieve all of current user's incomplete quests
             current_active_quests = current_user.get_quests("INCOMPLETE")
@@ -136,7 +136,7 @@ class questlog_view:
             :return: None
             """
             # DEBUG PRINT STATEMENT
-            print("running update_quest_listbox()...")
+            print("DEBUG: Running update_quest_listbox()...")
 
             # Clear listbox
             quest_listbox.delete(0, END)
@@ -191,12 +191,12 @@ class questlog_view:
         icon_path = "usermedia/1/test_wizard"
 
         # DEBUG
-        print(f"Loading user icon from {icon_path}...")
+        print(f"DEBUG: Loading user icon from {icon_path}...")
         icon = PILImage.open(icon_path)
         if icon:
-            print("Loaded user icon.")
+            print("DEBUG: Loaded user icon.")
         else:
-            print("Failed to load user icon.")
+            print("DEBUG: Failed to load user icon.")
 
         preferred_width = 100
         preferred_height = 100
@@ -280,13 +280,13 @@ class questlog_view:
                            sticky="w")
         quest_listbox.yview()
 
-        print("Initializing quest_listbox...")
+        print("DEBUG: Initializing quest_listbox...")
         # INITIALIZE QUEST_LISTBOX
         try:
             populate_quest_log(current_user)
-            print("Initialized quest listbox.")
+            print("DEBUG: Initialized quest listbox.")
         except Exception as e:
-            print(f"Failed to initialize quest listbox: {e}")
+            print(f"DEBUG: Failed to initialize quest listbox: {e}")
 
 
         ##### USER STATS SIDE PANEL #####
@@ -398,7 +398,9 @@ class questlog_view:
                                  fg="white",
                                  bg="black",
                                  highlightthickness=0,
-                                 command=h.complete_button_handler,
+                                 command=lambda: h.complete_button_handler(current_user,
+                                                                           quest_listbox,
+                                                                           update_quest_log),
                                  width=10,
                                  bd=0)
 

@@ -24,9 +24,9 @@ try:
     program = ui.questlog_view(root, database_connection)
 
     #Start the main events loop
-    print("Launching GUI...")
+    print("DEBUG: Launching GUI...")
     program.build()
-    print("Successfully launched GUI.")
+    print("DEBUG: Successfully launched GUI.")
     root.mainloop()
 
 except Exception as e:

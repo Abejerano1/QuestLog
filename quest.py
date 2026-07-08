@@ -176,7 +176,8 @@ class QuestManager:
         """
             Delete a quest from the user's quest database
             :param user_id: ID number of the current user.
-            :param quest_name: Name of the quest.
+            :param entry_id: Unique ID number of the quest in
+                   the user's quest log instance.
             :return: None
         """
         # DEBUG
@@ -216,8 +217,8 @@ class QuestManager:
     def set_complete(self, user_id, quest_name):
         """
         Updates a quest's completion status to 'COMPLETE'
-        :param user_id: TBD
-        :param quest_name: TBD
+        :param user_id: The ID number of the current user.
+        :param quest_name: The name of the selected quest.
         :return: None
         """
         if not quest_name:

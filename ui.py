@@ -381,7 +381,9 @@ class questlog_view:
                             fg="white",
                             bg="black",
                             highlightthickness=0,
-                            command=h.del_button_handler,
+                            command=lambda: h.del_button_handler(current_user,
+                                                                 quest_listbox,
+                                                                 update_quest_log),
                             width=10,
                             bd=0)
 

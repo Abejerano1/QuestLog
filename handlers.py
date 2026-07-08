@@ -8,8 +8,8 @@ def add_button_handler(current_user, entry_field, refresh_callback):
     Handles quest addition button procedure.
     :param current_user: The current user.
     :param entry_field: The selected quest.
-    :param refresh_callback: The function we are passing back to
-        in order to refresh the list of quests.
+    :param refresh_callback: The function we are passing back
+                             to refresh the list of quests.
     :return: None
     """
     print("Debug: Calling add_button_handler\n")
@@ -29,6 +29,10 @@ def add_button_handler(current_user, entry_field, refresh_callback):
 def del_button_handler(current_user, quest_listbox, refresh_callback):
     """
     Handles quest deletion button procedure.
+    :param current_user: The current user.
+    :param quest_listbox: The quest listbox.
+    :param refresh_callback: The function we are passing back
+                             to refresh the list of quests.
     :return: None
     """
     # 1. Get the selected quest index from the listbox

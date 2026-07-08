@@ -1,16 +1,17 @@
-from multiprocessing import connection
-
-import psycopg2
 from psycopg2 import Error
 from psycopg2 import sql
 
+
 class Quest:
-    def __init__(self, id_num=-1, name=None, desc=None, exp=10, complete=False, completion_date=None):
+    def __init__(self, id_num=-1, entry_id=-1, name=None, desc=None,
+                        exp=10, complete=False, date_added = None, completion_date=None):
         self.id_num = id_num
+        self.entry_id = entry_id
         self.name = name
         self.exp = exp
         self.complete = complete
         self.completion_date = completion_date
+        self.date_added = date_added
         self.desc = desc
 
     def __int__(self) -> int:
@@ -28,6 +29,12 @@ class Quest:
         """
         return self.id_num
 
+    def get_entry_id(self):
+        """
+        Returns the entry_id of the calling Quest object
+        :return: Int Quest object entry_id attribute
+        """
+        return self.entry_id
 
     def get_name(self) -> str:
         """
@@ -45,7 +52,7 @@ class Quest:
         return self.desc
 
 
-    def get_quest_exp(self) -> int:
+    def get_exp(self) -> int:
         """
         Returns the exp of the calling Quest object
         :return: Integer Quest object exp attribute
@@ -60,36 +67,22 @@ class Quest:
         """
         return self.complete
 
+    def get_date_added(self) -> int:
+        """
+        Returns the date the calling Quest object was added to a user's list
+        :return: Int date
+        """
+        return self.date_added
+
 class QuestManager:
-    def __init__(self):
+    def __init__(self, database_connection):
         """
         Initialize the manager and establish a single
         persistent connection.
         """
-        try:
-            # Connect to the database
-            print("Connecting to database...")
-            self.connection = psycopg2.connect(
-                user="postgres",
-                password="password",
-                host="localhost",
-                database="questlog",
-                port="5432")
-            print("Database connected!")
+        # Passed from main -> ui -> handlers -> here
+        self.connection = database_connection
 
-        except Error as e:
-            print("Error while connecting to PostgreSQL", e)
-            self.connection = None
-
-    def close(self):
-        """
-        Function that safely closes the connection
-        when the application closes.
-        """
-        if self.connection:
-            print("Closing connection...")
-            self.connection.close()
-            print("Database connection closed safely.")
 
     def get_all_quests(self):
         """
@@ -134,18 +127,20 @@ class QuestManager:
             return None
 
 
-    def add_quest(self, user_id, quest_name):
+    def add_quest(self, user_id, new_quest):
         """
         Commit a quest to the user's quest database
-        :param quest_name: Name of the quest
+        :param user_id: ID number of the current user.
+        :param new_quest: Passed Quest object to be added.
         :return: None
         """
         print("DEBUG: Entered quest.add_quest.")
         if not self.connection:
+            print("DEBUG: No cursor connection!")
             return
 
         # Case: Check if valid quest was selected before SQL query
-        if not quest_name or quest_name in ["Select quest...", "No quests selected."]:
+        if new_quest.get_name() in [None, "", "Select quest...", "No quests selected."]:
             print("ERROR: No valid quest selected.")
             return
 
@@ -158,12 +153,12 @@ class QuestManager:
 
             print("DEBUG: Executing query...")
             query = sql.SQL("""
-                        INSERT INTO questlog.{table} (quest_name, quest_exp, quest_status, quest_id)
-                        SELECT quest_name, quest_exp, 'INCOMPLETE', quest_id
-                        FROM questlog.quests
-                        WHERE quest_name = %s;
+                        INSERT INTO questlog.{table} (quest_id, quest_name, quest_exp, quest_status)
+                        VALUES (%s, %s, %s, 'INCOMPLETE');
                     """).format(table=sql.Identifier(table_name))
-            cursor.execute(query, (quest_name,))
+            cursor.execute(query, (new_quest.get_id(),
+                                   new_quest.get_name(),
+                                   new_quest.get_exp()))
 
             print("Query executed!")
             # Commit changes
@@ -177,34 +172,33 @@ class QuestManager:
             print("Error while connecting to PostgreSQL", e)
 
 
-    def del_quest(self, user_id, quest_name):
+    def del_quest(self, user_id, entry_id):
         """
             Delete a quest from the user's quest database
             :param user_id: ID number of the current user.
             :param quest_name: Name of the quest.
             :return: None
         """
-
         # DEBUG
         print("DEBUG: Entered quest.del_quest.")
 
         # Case: Check if valid quest was selected before SQL query
-        if not quest_name:
+        if not entry_id:
             print("ERROR: No valid quest selected.")
             return
 
         try:
             cursor = self.connection.cursor()
-
             table_name = f"u_{user_id}_quests"
             print(f"DEBUG: table_name = {table_name}")
 
-            print("DEBUG: Executing query...")
+            print(f"DEBUG: Removing {entry_id} from {table_name}...")
             query = sql.SQL("""
-                                DELETE FROM questlog.{table}
-                                WHERE quest_name = %s;
+                            DELETE FROM questlog.{table}
+                            WHERE entry_id = %s;
                             """).format(table=sql.Identifier(table_name))
-            cursor.execute(query, (quest_name,))
+
+            cursor.execute(query, (entry_id,))
 
             print("DEBUG: Query executed!")
             # Commit changes
@@ -212,18 +206,18 @@ class QuestManager:
             # Clean up connections
             cursor.close()
 
-            print(f"DEBUG: Quest {quest_name} successfully deleted!")
+            print(f"DEBUG: Quest log instance {entry_id} successfully deleted!")
             print("DEBUG: Exiting quest.del_quest...")
 
         except Error as e:
-            print("Error while connecting to PostgreSQL", e)
+            print("Error while executing delete query:", e)
 
 
     def set_complete(self, user_id, quest_name):
         """
         Updates a quest's completion status to 'COMPLETE'
-        :param side_panel_contents: TBD
-        :param quest_history_listbox: TBD
+        :param user_id: TBD
+        :param quest_name: TBD
         :return: None
         """
         if not quest_name:

@@ -1,9 +1,7 @@
 import datetime
-import handlers as h
 import tkinter as tk
 
 import quest
-import user
 from PIL import Image as PILImage, ImageTk
 from tkinter import *
 from tkinter import font
@@ -11,7 +9,7 @@ from tkinter import ttk
 
 
 class questlog_view:
-    def __init__(self, root_window, database_connection):
+    def __init__(self, root_window, db_connection):
         """
         questlog_view class constructor
         :param root_window: The window within which the GUI will exist.
@@ -19,7 +17,7 @@ class questlog_view:
         """
         # Creates the root window
         self.root = root_window
-        self.database_connection = database_connection
+        self.database_connection = db_connection
 
         # Configure window passed from main
         self.window_setup()
@@ -59,13 +57,14 @@ class questlog_view:
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
 
-    def build(self):
+    def build(self, current_user):
         """
         Function that builds the main program window.
         :return: None
         """
+        # Import handlers
+        import handlers as h
         # FETCH CURRENT USER DATA
-        current_user = user.User(1, "Merlin", 28, 9001, "Mage", "Technomancer")
         user_info = current_user.get_info()
 
         # If user info exists, assign it to variable user_info
@@ -93,7 +92,7 @@ class questlog_view:
             total_quests = total_quests
 
         # Create a QuestManager object to handle quest fetching
-        quest_manager = quest.QuestManager()
+        quest_manager = quest.QuestManager(self.database_connection)
 
         # Fetch master list of quests
         master_list = quest_manager.get_all_quests()
@@ -144,10 +143,16 @@ class questlog_view:
             # Assign the list of active quests into current_active_quests
             current_active_quests = current_user.get_quests("INCOMPLETE")
 
+            # List for the unique entry IDs
+            quest_listbox.active_quests = []
+
             # Repopulate listbox
             for quest in current_active_quests:
-                list_item = f"{quest.name} - EXP: {quest.exp}"
+                list_item = f"{quest.get_name()} - EXP: {quest.get_exp()}"
                 quest_listbox.insert(END, list_item)
+
+                # Track the unique entry ID
+                quest_listbox.active_quests.append(quest)
 
             entry_field.set("Select quest...")
 
@@ -280,6 +285,9 @@ class questlog_view:
                            sticky="w")
         quest_listbox.yview()
 
+        # List for the unique entry IDs
+        quest_listbox.active_quests = []
+
         print("DEBUG: Initializing quest_listbox...")
         # INITIALIZE QUEST_LISTBOX
         try:
@@ -366,7 +374,11 @@ class questlog_view:
                             fg="white",
                             bg="black",
                             highlightthickness=0,
-                            command=lambda: h.add_button_handler(current_user, entry_field, update_quest_log),
+                            command=lambda: h.add_button_handler(current_user,
+                                                                 entry_field,
+                                                                 update_quest_log,
+                                                                 self.database_connection,
+                                                                 quest_lookup),
                             width=10,
                             bd=0)
 
@@ -383,7 +395,8 @@ class questlog_view:
                             highlightthickness=0,
                             command=lambda: h.del_button_handler(current_user,
                                                                  quest_listbox,
-                                                                 update_quest_log),
+                                                                 update_quest_log,
+                                                                 self.database_connection),
                             width=10,
                             bd=0)
 
@@ -400,7 +413,8 @@ class questlog_view:
                                  highlightthickness=0,
                                  command=lambda: h.complete_button_handler(current_user,
                                                                            quest_listbox,
-                                                                           update_quest_log),
+                                                                           update_quest_log,
+                                                                           self.database_connection),
                                  width=10,
                                  bd=0)
 

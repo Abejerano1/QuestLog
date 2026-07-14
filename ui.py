@@ -1,5 +1,6 @@
 import datetime
 import tkinter as tk
+from threading import activeCount
 
 import quest
 from PIL import Image as PILImage, ImageTk
@@ -121,12 +122,18 @@ class questlog_view:
             # DEBUG PRINT STATEMENT
             print("DEBUG: Running initialize_quest_listbox()...")
 
+            # Clear out the old data to prevent compounding on refresh
+            quest_listbox.delete(0, END)
+            quest_listbox.active_quests = []
+
             # Retrieve all of current user's incomplete quests
             current_active_quests = current_user.get_quests("INCOMPLETE")
             # Insert quest entry into the end of the quest log listbox
             for quest in current_active_quests:
                 list_item = f"{quest.name} - EXP: {quest.exp}"
                 quest_listbox.insert(END, list_item)
+
+                quest_listbox.active_quests.append(quest)
 
         def update_quest_log(current_user):
             """
@@ -139,6 +146,7 @@ class questlog_view:
 
             # Clear listbox
             quest_listbox.delete(0, END)
+            quest_listbox.active_quests = []
 
             # Assign the list of active quests into current_active_quests
             current_active_quests = current_user.get_quests("INCOMPLETE")
@@ -148,7 +156,7 @@ class questlog_view:
 
             # Repopulate listbox
             for quest in current_active_quests:
-                list_item = f"{quest.get_name()} - EXP: {quest.get_exp()}"
+                list_item = f"{quest.name} - EXP: {quest.exp}"
                 quest_listbox.insert(END, list_item)
 
                 # Track the unique entry ID
@@ -287,6 +295,10 @@ class questlog_view:
 
         # List for the unique entry IDs
         quest_listbox.active_quests = []
+        print(f"DEBUG: active_quests[]:")
+
+        for item in quest_listbox.active_quests:
+           print(f"DEBUG: {item}")
 
         print("DEBUG: Initializing quest_listbox...")
         # INITIALIZE QUEST_LISTBOX

@@ -83,7 +83,8 @@ class User:
                     exp=quest[1],
                     complete=quest[2],
                     id_num=quest[3],
-                    completion_date=quest[4]
+                    completion_date=quest[4],
+                    entry_id=quest[7]
                 )
 
                 result_quest_list.append(quest_object)

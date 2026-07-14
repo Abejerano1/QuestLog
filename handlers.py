@@ -55,21 +55,24 @@ def del_button_handler(current_user, quest_listbox, refresh_callback, database_c
     selection_index = quest_listbox.curselection()
     if not selection_index:
         print("DEBUG: No quest selected.")
+    else:
+        print(f"DEBUG: selection_index = {selection_index}")
 
     # Grab the selected row number
     chosen_row = selection_index[0]
+    print(f"DEBUG: chosen_row = {chosen_row}")
 
     # Grab the full Quest object tied to the selected row
     target_quest = quest_listbox.active_quests[chosen_row]
 
-    print(f"DEBUG: Quest name: {target_quest.get_name()}")
-    print(f"Entry ID: {target_quest.get_entry_id()}")
+    print(f"DEBUG: Quest name: {target_quest.name}")
+    print(f"Entry ID: {target_quest.entry_id}")
 
     # 2. call quest.del_quest()
     # Create quest manager to access quest functions
     manager = quest.QuestManager(database_connection)
 
-    print("DEBUG: Calling del_button_handler\n")
+    #print("DEBUG: Calling del_button_handler\n")
     manager.del_quest(current_user.id_num, target_quest.get_entry_id())
 
     # 3. Call refresh function

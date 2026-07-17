@@ -151,7 +151,7 @@ class questlog_view:
             # Assign the list of active quests into current_active_quests
             current_active_quests = current_user.get_quests("INCOMPLETE")
 
-            # List for the unique entry IDs
+            # List for keeping track of the entry IDs
             quest_listbox.active_quests = []
 
             # Repopulate listbox
@@ -163,6 +163,35 @@ class questlog_view:
                 quest_listbox.active_quests.append(quest)
 
             entry_field.set("Select quest...")
+
+        def populate_quest_history(current_user):
+            """
+            Function that initializes a user's 'Completed Quests' list
+            :param current_user: The list belonging to the current user that is being updated.
+            """
+            # DEBUG PRINT STATEMENT
+            print("DEBUG: Running populate_quest_listbox()...")
+
+            # Clear listbox
+            print("Clearing quest_history_listbox...")
+            quest_history_listbox.delete(0, END)
+
+            # Declare list for tracking entry IDs
+            quest_history_listbox.completed_quests = []
+
+            # Fetch quests with status "COMPLETE"
+            current_completed_quests = current_user.get_quests("COMPLETE")
+
+            # Populate the listbox and the tracking list
+            for quest in current_completed_quests:
+                list_item = f"{quest.name} - {quest.complete}"
+                quest_history_listbox.insert(END, list_item)
+
+                quest_history_listbox.completed_quests.append(quest)
+
+
+        # Initializes the 'COMPLETED QUESTS' list with completed quests
+        # def populate_quest_history(current_user)
 
         # Initializes the stats panel with default values
         def populate_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents):
@@ -464,3 +493,18 @@ class questlog_view:
                                         highlightbackground="#293b10",
                                         highlightthickness=0)
         quest_history_listbox.pack()
+
+        # List for the unique entry IDs
+        quest_history_listbox.completed_quests = []
+        print(f"DEBUG: completed_quests[]:")
+
+        for item in quest_history_listbox.completed_quests:
+            print(f"DEBUG: {item}")
+
+        print("DEBUG: Initializing quest_history_listbox...")
+        # INITIALIZE QUEST_HISTORY_LISTBOX
+        try:
+            populate_quest_history(current_user)
+            print("DEBUG: Initialized quest history listbox.")
+        except Exception as e:
+            print(f"DEBUG: Failed to initialize quest history listbox: {e}")

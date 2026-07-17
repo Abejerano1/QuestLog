@@ -114,4 +114,5 @@ def complete_button_handler(current_user, quest_listbox, refresh_callback, datab
 
     # 4. Update side panel
 
+
     # 5. Update quest history panel

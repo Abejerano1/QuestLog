@@ -1,4 +1,5 @@
 import quest
+import ui
 
 ##### EVENT HANDLERS #####
 def add_button_handler(current_user, entry_field, refresh_callback, database_connection, quest_lookup):
@@ -83,7 +84,12 @@ def del_button_handler(current_user, quest_listbox, refresh_callback, database_c
 
     # Update quest history listbox
 
-def complete_button_handler(current_user, quest_listbox, refresh_callback, database_connection):
+def complete_button_handler(current_user,
+                            quest_listbox,
+                            quest_history_listbox,
+                            refresh_callback,
+                            history_refresh_callback,
+                            database_connection):
     """
     Handles quest completion button procedure.
     :param current_user: The current user.
@@ -111,8 +117,7 @@ def complete_button_handler(current_user, quest_listbox, refresh_callback, datab
 
     # 3. Call refresh function
     refresh_callback(current_user)
-
     # 4. Update side panel
 
-
     # 5. Update quest history panel
+    history_refresh_callback(current_user, quest_history_listbox)

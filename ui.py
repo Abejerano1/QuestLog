@@ -1,6 +1,5 @@
 import datetime
 import tkinter as tk
-from threading import activeCount
 
 import quest
 from PIL import Image as PILImage, ImageTk
@@ -164,6 +163,7 @@ class questlog_view:
 
             entry_field.set("Select quest...")
 
+        # Initializes the 'COMPLETED QUESTS' list with completed quests
         def populate_quest_history(current_user):
             """
             Function that initializes a user's 'Completed Quests' list
@@ -189,9 +189,33 @@ class questlog_view:
 
                 quest_history_listbox.completed_quests.append(quest)
 
+        def update_quest_history(current_user, quest_history_listbox):
+            """
+            Function that updates the quest_history listbox at the
+            foot of the main window.
+            :param current_user: The quest history listbox of the currently
+            active user.
+            :return: None
+            """
+            # DEBUG PRINT STATEMENT
+            print("DEBUG: Running update_quest_history()...")
 
-        # Initializes the 'COMPLETED QUESTS' list with completed quests
-        # def populate_quest_history(current_user)
+            # Clear listbox
+            quest_history_listbox.delete(0, END)
+
+            # Declare list for tracking entry IDs
+            quest_history_listbox.completed_quests = []
+
+            # Assign the list of active quests into current_active_quests
+            current_active_quests = current_user.get_quests("COMPLETE")
+
+            # Repopulate listbox
+            for quest in current_active_quests:
+                list_item = f"{quest.name} - {quest.complete}"
+                quest_history_listbox.insert(END, list_item)
+
+                quest_history_listbox.completed_quests.append(quest)
+
 
         # Initializes the stats panel with default values
         def populate_side_panel(complete_quests, incomplete_quests, total_quests, side_panel_contents):
@@ -454,7 +478,9 @@ class questlog_view:
                                  highlightthickness=0,
                                  command=lambda: h.complete_button_handler(current_user,
                                                                            quest_listbox,
+                                                                           quest_history_listbox,
                                                                            update_quest_log,
+                                                                           update_quest_history,
                                                                            self.database_connection),
                                  width=10,
                                  bd=0)
@@ -491,7 +517,8 @@ class questlog_view:
                                         bg="#0c1105",
                                         highlightcolor="#7fd900",
                                         highlightbackground="#293b10",
-                                        highlightthickness=0)
+                                        highlightthickness=0,
+                                        takefocus=0)
         quest_history_listbox.pack()
 
         # List for the unique entry IDs

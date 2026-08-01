@@ -189,7 +189,7 @@ class questlog_view:
 
                 quest_history_listbox.completed_quests.append(quest)
 
-        def update_quest_history(current_user, quest_history_listbox):
+        def update_quest_history(current_user):
             """
             Function that updates the quest_history listbox at the
             foot of the main window.
@@ -237,6 +237,34 @@ class questlog_view:
             side_panel_contents.insert(END, incomplete_entry)
             side_panel_contents.insert(END, complete_entry)
             side_panel_contents.insert(END, total_entry)
+
+
+        # Updates the stats panel with current values
+        def update_side_panel(current_user):
+            """
+            Function that updates the side statistics panel.
+            :param complete_quests: Number of user's completed quests.
+            :param incomplete_quests: Number of user's incomplete quests.
+            :param total_quests: Number of all of user's quests.
+            :param side_panel_contents: The side panel's listbox where the statistics
+                    can be seen.
+            :return: None
+            """
+            print("DEBUG: Running update_side_panel()...")
+
+            # Clear the side panel contents
+            side_panel_contents.delete(0, END)
+
+            # Gather the variables
+            incomplete_entry = (f"INCOMPLETE QUESTS: {current_user.incomplete_quests}")
+            complete_entry = (f"COMPLETE QUESTS: {current_user.complete_quests}")
+            total_entry = (f"TOTAL QUESTS: {current_user.total_quests}")
+
+            # List them
+            side_panel_contents.insert(END, incomplete_entry)
+            side_panel_contents.insert(END, complete_entry)
+            side_panel_contents.insert(END, total_entry)
+
 
         # Widgets displaying in root window
 
@@ -481,6 +509,7 @@ class questlog_view:
                                                                            quest_history_listbox,
                                                                            update_quest_log,
                                                                            update_quest_history,
+                                                                           update_side_panel,
                                                                            self.database_connection),
                                  width=10,
                                  bd=0)

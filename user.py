@@ -53,6 +53,78 @@ class User:
             return None
 
 
+    def get_id(self):
+        """
+        Function that returns user id
+        :return: Int user id_num
+        """
+        return self.id_num
+
+
+    def get_name(self):
+        """
+        Function that returns user's user_name
+        :return: String of user's user_name
+        """
+        return self.user_name
+
+
+    def get_level(self):
+        """
+        Function that returns user's user_level
+        :return: Int of user's level
+        """
+        return self.level
+
+
+    def get_exp(self):
+        """
+        Function that returns user's user_exp
+        :return: Int of user's exp
+        """
+        return self.exp
+
+
+    def get_user_class(self):
+        """
+        Function that returns user's user_class
+        :return: String of user's user_class
+        """
+        return self.user_class
+
+
+    def get_user_spec(self):
+        """
+        Function that returns user's user_spec
+        :return: String of user's user_spec
+        """
+        return self.user_spec
+
+
+    def get_complete_quests(self):
+        """
+        Function that returns user's complete_quests
+        :return: Int of user's complete_quests
+        """
+        return self.complete_quests
+
+
+    def get_incomplete_quests(self):
+        """
+        Function that returns user's incomplete_quests
+        :return: Int of user's incomplete_quests
+        """
+        return self.incomplete_quests
+
+
+    def get_total_quests(self):
+        """
+        Function that returns user's total_quests
+        :return: Int of user's total_quests
+        """
+        return self.total_quests
+
+
 
     def get_quests(self, status):
         """
@@ -94,3 +166,66 @@ class User:
         except Error as e:
             print("Error while connecting to PostgreSQL", e)
             return None
+
+
+    def increment_total_quests(self):
+        """
+        Function that increments a User's "total_quests" count by 1
+        :return: None
+        """
+        try:
+            cursor = self.connection.cursor()
+
+            # Execute update query
+            query = f"""
+                    UPDATE questlog.users
+                    SET total_quests = total_quests + 1
+                    WHERE user_id = %s;
+            """
+            cursor.execute(query, (self.id_num,))
+            self.connection.commit()
+
+        except Error as e:
+            print("Error while running increment_total_quests", e)
+
+
+    def increment_complete_quests(self):
+        """
+        Function that increments a User's "complete_quests" count by 1
+        :return: None
+        """
+        try:
+            cursor = self.connection.cursor()
+
+            # Execute update query
+            query = f"""
+                    UPDATE questlog.users
+                    SET complete_quests = complete_quests + 1
+                    WHERE user_id = %s;
+            """
+            cursor.execute(query, (self.id_num,))
+            self.connection.commit()
+
+        except Error as e:
+            print("Error while running increment_complete_quests", e)
+
+
+    def decrement_incomplete_quests(self):
+        """
+        Function that decrements a User's "incomplete_quests" count by 1
+        :return: None
+        """
+        try:
+            cursor = self.connection.cursor()
+
+            # Execute update query
+            query = f"""
+                    UPDATE questlog.users
+                    SET incomplete_quests = incomplete_quests - 1
+                    WHERE user_id = %s;
+            """
+            cursor.execute(query, (self.id_num,))
+            self.connection.commit()
+
+        except Error as e:
+            print("Error while running decrement_incomplete_quests", e)

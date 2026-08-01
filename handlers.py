@@ -89,13 +89,20 @@ def complete_button_handler(current_user,
                             quest_history_listbox,
                             refresh_callback,
                             history_refresh_callback,
+                            stats_refresh_callback,
                             database_connection):
     """
     Handles quest completion button procedure.
     :param current_user: The current user.
     :param quest_listbox: The quest listbox.
+    :param quest_history_listbox: The quest history listbox.
     :param refresh_callback: The function we are passing back
-                             to refresh the list of quests.
+                             to refresh the list of quests (in this case,
+                             update_quest_log).
+    :param history_refresh_callback: The function we are passing back
+                            to refresh the user's completed quests list.
+    :param stats_refresh_callback: The function we are passing back to
+                            refresh the user's side panel stats.
     :param database_connection: The database connection.
     :return: None
     """
@@ -117,7 +124,13 @@ def complete_button_handler(current_user,
 
     # 3. Call refresh function
     refresh_callback(current_user)
+
+    # 4. Update user information
+    current_user.increment_complete_quests()
+    current_user.decrement_incomplete_quests()
+
     # 4. Update side panel
+    stats_refresh_callback(current_user)
 
     # 5. Update quest history panel
-    history_refresh_callback(current_user, quest_history_listbox)
+    history_refresh_callback(current_user)

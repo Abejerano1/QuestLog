@@ -255,10 +255,19 @@ class questlog_view:
             # Clear the side panel contents
             side_panel_contents.delete(0, END)
 
+            print("DEBUG: Running current_user.get_info()...")
+            current_complete_quests = current_user.get_complete_quests()
+            current_incomplete_quests = current_user.get_incomplete_quests()
+            current_total_quests = current_user.get_total_quests()
+
+            print(f"DEBUG: incomplete quests = {current_incomplete_quests}")
+            print(f"DEBUG: complete quests = {current_complete_quests}")
+            print(f"DEBUG: total_quests = {current_total_quests}")
+
             # Gather the variables
-            incomplete_entry = (f"INCOMPLETE QUESTS: {current_user.incomplete_quests}")
-            complete_entry = (f"COMPLETE QUESTS: {current_user.complete_quests}")
-            total_entry = (f"TOTAL QUESTS: {current_user.total_quests}")
+            incomplete_entry = (f"INCOMPLETE QUESTS: {current_incomplete_quests}")
+            complete_entry = (f"COMPLETE QUESTS: {current_complete_quests}")
+            total_entry = (f"TOTAL QUESTS: {current_total_quests}")
 
             # List them
             side_panel_contents.insert(END, incomplete_entry)

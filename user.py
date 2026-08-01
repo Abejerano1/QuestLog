@@ -106,7 +106,30 @@ class User:
         Function that returns user's complete_quests
         :return: Int of user's complete_quests
         """
-        return self.complete_quests
+        print("DEBUG: Running get_complete_quests()...")
+        cursor = self.connection.cursor()
+
+        try:
+            print("DEBUG: Querying user info...")
+            # 3. Execute simple single row query by ID
+            query = f"""
+                                SELECT complete_quests
+                                FROM questlog.users
+                                WHERE user_id = %s;
+                            """
+            cursor.execute(query, (self.id_num,))
+
+            # 4. Store one row of data into user_info
+            complete_quests = cursor.fetchone()
+
+            # 5. Return the row of data
+            print("DEBUG: User info successfully fetched!")
+            print("DEBUG: Returning user info...")
+            return complete_quests[0]
+
+        except Error as e:
+            print("Error while connecting to PostgreSQL", e)
+            return None
 
 
     def get_incomplete_quests(self):
@@ -114,7 +137,30 @@ class User:
         Function that returns user's incomplete_quests
         :return: Int of user's incomplete_quests
         """
-        return self.incomplete_quests
+        print("DEBUG: Running get_incomplete_quests()...")
+        cursor = self.connection.cursor()
+
+        try:
+            print("DEBUG: Querying user info...")
+            # 3. Execute simple single row query by ID
+            query = f"""
+                                        SELECT incomplete_quests
+                                        FROM questlog.users
+                                        WHERE user_id = %s;
+                                    """
+            cursor.execute(query, (self.id_num,))
+
+            # 4. Store one row of data into user_info
+            incomplete_quests = cursor.fetchone()
+
+            # 5. Return the row of data
+            print("DEBUG: User info successfully fetched!")
+            print("DEBUG: Returning user info...")
+            return incomplete_quests[0]
+
+        except Error as e:
+            print("Error while connecting to PostgreSQL", e)
+            return None
 
 
     def get_total_quests(self):
@@ -122,7 +168,30 @@ class User:
         Function that returns user's total_quests
         :return: Int of user's total_quests
         """
-        return self.total_quests
+        print("DEBUG: Running get_total_quests()...")
+        cursor = self.connection.cursor()
+
+        try:
+            print("DEBUG: Querying user info...")
+            # 3. Execute simple single row query by ID
+            query = f"""
+                                        SELECT total_quests
+                                        FROM questlog.users
+                                        WHERE user_id = %s;
+                                    """
+            cursor.execute(query, (self.id_num,))
+
+            # 4. Store one row of data into user_info
+            total_quests = cursor.fetchone()
+
+            # 5. Return the row of data
+            print("DEBUG: User info successfully fetched!")
+            print("DEBUG: Returning user info...")
+            return total_quests[0]
+
+        except Error as e:
+            print("Error while connecting to PostgreSQL", e)
+            return None
 
 
 
